@@ -16,3 +16,8 @@ Thumbs.db
 
 # Logs
 npm-debug.log*
+
+# Raw exported data
+comments.json
+format3.json
+formats_1_2.json
