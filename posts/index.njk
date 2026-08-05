@@ -1,0 +1,27 @@
+---
+title: "All Posts"
+layout: list.njk
+eleventyExcludeFromCollections: true
+pagination:
+  data: collections.storyPosts
+  size: 10
+  reverse: true
+  alias: pagePosts
+permalink: "{% if pagination.pageNumber == 0 %}/index.html{% else %}/page/{{ pagination.pageNumber + 1 }}/index.html{% endif %}"
+---
+<ul class="post-list">
+{%- for post in pagePosts -%}
+  <li>
+    <time>{{ post.data.date | readableDate }}</time>
+    &mdash;
+    <a href="{{ post.url }}">{{ post.data.title }}</a>
+    {% if post.data.excerpt %}<p class="excerpt">{{ post.data.excerpt | safe }}</p>{% endif %}
+  </li>
+{%- endfor -%}
+</ul>
+
+<nav class="pagination">
+  {%- if pagination.href.previous %}<a class="page-nav" href="{{ pagination.href.previous }}">&laquo; Previous</a>{% endif -%}
+  {%- for href in pagination.hrefs %}<a class="page-num {% if href == page.url %}current{% endif %}" href="{{ href }}">{{ loop.index }}</a>{% endfor -%}
+  {%- if pagination.href.next %}<a class="page-nav" href="{{ pagination.href.next }}">Next &raquo;</a>{% endif -%}
+</nav>

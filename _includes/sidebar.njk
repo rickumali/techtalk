@@ -1,0 +1,37 @@
+<section class="about-box">
+  <h3>Hello Again</h3>
+  <p>
+    Hello and welcome to Rick Umali's Tech Talk. I'm a computer
+    professional living and working in Greater Boston. I'm the author of
+    <strong>Learn Git in a Month of Lunches</strong> (Manning
+    Publications), a beginner's tutorial book on Git.
+  </p>
+  <p>
+    Feel free to send me e-mail (rickumali@gmail.com) or comment on any
+    item. Thanks for visiting!
+  </p>
+</section>
+
+<section class="recent-posts">
+  <h3>Recent Posts</h3>
+  <ul>
+    {%- for post in collections.storyPosts | reverse | limit(8) -%}
+    <li><a href="{{ post.url }}">{{ post.data.title }}</a></li>
+    {%- endfor -%}
+  </ul>
+</section>
+
+<section class="tag-cloud">
+  <h3>Tags</h3>
+  <p class="cloud">
+    {%- for tag in collections.tagList -%}
+      {%- set count = collections[tag].length -%}
+      {%- if count > 15 -%}{%- set sizeClass = "tag-xl" -%}
+      {%- elif count > 8 -%}{%- set sizeClass = "tag-lg" -%}
+      {%- elif count > 3 -%}{%- set sizeClass = "tag-md" -%}
+      {%- else -%}{%- set sizeClass = "tag-sm" -%}
+      {%- endif -%}
+      <a class="tag-cloud-item {{ sizeClass }}" href="/tags/{{ tag | slug }}/">{{ tag }}</a>
+    {% endfor %}
+  </p>
+</section>

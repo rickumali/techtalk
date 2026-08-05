@@ -1,0 +1,44 @@
+body { margin: 0; font-family: system-ui, sans-serif; line-height: 1.6; }
+.container { max-width: 1100px; margin: 0 auto; padding: 0 1rem; }
+
+.site-header { background: #d6d6d6; padding: 1.5rem 1rem; margin-bottom: 2rem; }
+.site-header-inner { max-width: 1100px; margin: 0 auto; }
+.site-header h1 { margin: 0; font-size: 2.75rem; }
+.site-header h1 a { color: #1a4fa0; text-decoration: none; font-weight: 800; }
+.site-header .tagline { margin: 0.25rem 0 0; color: #111; font-size: 1rem; }
+
+.site-nav { margin-bottom: 1.5rem; }
+.site-nav a { text-decoration: none; }
+
+.page { display: flex; gap: 3rem; align-items: flex-start; }
+.main { flex: 3; min-width: 0; }
+.sidebar { flex: 1; min-width: 200px; order: -1; }
+
+.tags { list-style: none; padding: 0; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.tags li { background: #eee; padding: 0.1rem 0.5rem; border-radius: 3px; font-size: 0.85rem; }
+
+.archived-comments { margin-top: 3rem; border-top: 1px solid #ddd; padding-top: 1rem; }
+.comment { margin-bottom: 1.5rem; padding: 0.75rem; background: #fafafa; border-radius: 4px; }
+pre { overflow-x: auto; padding: 1rem; }
+
+.post-list { list-style: none; padding: 0; }
+.post-list li { margin-bottom: 1.5rem; }
+.post-list .excerpt { margin: 0.25rem 0 0; color: #555; font-size: 0.95rem; }
+
+.recent-posts ul { list-style: none; padding: 0; margin: 0; }
+.recent-posts li { margin-bottom: 0.5rem; font-size: 0.9rem; }
+
+.tag-cloud .cloud { line-height: 2.2; }
+.tag-cloud-item { margin-right: 0.5rem; text-decoration: none; white-space: nowrap; }
+.tag-sm { font-size: 0.8rem; }
+.tag-md { font-size: 1rem; }
+.tag-lg { font-size: 1.25rem; }
+.tag-xl { font-size: 1.6rem; }
+
+.about-box { background: #dbe7f7; padding: 1rem; border-radius: 4px; margin-bottom: 1.5rem; }
+.about-box h3 { margin-top: 0; }
+.about-box p { font-size: 0.95rem; }
+
+@media (max-width: 700px) {
+  .page { flex-direction: column; }
+}

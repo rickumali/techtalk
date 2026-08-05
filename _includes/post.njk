@@ -1,0 +1,34 @@
+---
+layout: base.njk
+---
+<article>
+  <h1>{{ title }}</h1>
+  {% if date %}<time>{{ date | readableDate }}</time>{% endif %}
+
+  {% if tags %}
+  <ul class="tags">
+    {% for tag in tags %}<li>{{ tag }}</li>{% endfor %}
+  </ul>
+  {% endif %}
+
+  <div class="body">
+    {{ content | safe }}
+  </div>
+
+  {% set postComments = comments[nid ~ ""] %}
+  {% if postComments and postComments.length %}
+  <section class="archived-comments">
+    <h2>Comments <small>(archived from the original site)</small></h2>
+    {% for c in postComments %}
+    <div class="comment" id="comment-{{ c.cid }}">
+      <p class="comment-meta">
+        <strong>{{ c.author }}</strong>
+        {% if c.subject %} &mdash; <em>{{ c.subject }}</em>{% endif %}
+        <br><time>{{ c.created | epochDate }}</time>
+      </p>
+      <div class="comment-body">{{ c.body_html | safe }}</div>
+    </div>
+    {% endfor %}
+  </section>
+  {% endif %}
+</article>

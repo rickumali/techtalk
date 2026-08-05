@@ -1,0 +1,12 @@
+---
+title: "Browse by Tag"
+layout: list.njk
+eleventyExcludeFromCollections: true
+permalink: "/tags/index.html"
+---
+<h1>Browse by Tag</h1>
+<ul class="tag-list">
+{%- for tag in collections.tagList -%}
+  <li><a href="/tags/{{ tag | slug }}/">{{ tag }}</a> ({{ collections[tag].length }})</li>
+{%- endfor -%}
+</ul>
