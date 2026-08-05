@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Eleventy build output
+_site/
+.cache/
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+
+# Logs
+npm-debug.log*
