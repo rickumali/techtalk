@@ -1,0 +1,29 @@
+---
+title: "Finishing Tetris"
+date: 2011-02-05
+tags: ["game", "tetris"]
+permalink: "/blog/2011/02/05/finishing-tetris/index.html"
+excerpt: "I finished my version of Tetris, and it's now available for you to try on your PC. I set a goal of finishing the game before Super Bowl XLV, and there turned out to be a lot to."
+nid: 55
+nodeType: "story"
+layout: post.njk
+---
+<p>I finished my version of Tetris, and it's now <a href="/tetris/">available</a> for you to try on your PC. I set a goal of finishing the game before Super Bowl XLV, and there turned out to be a lot to.</p>
+
+<p><strong>Icons</strong> - I created icons using <a href="http://www.gimp.org/">GIMP</a>. Creating icons can be <a href="http://www.gimp.org/tutorials/Creating_Icons/">an involved</a> process, but <a href="http://regx.dgswa.com/html/Gimp+ico+how+to">the key for me</a> was creating a "duplicate" layer. The "ICO" format is a specific format, and GIMP knows what to do with the additional layer. Referencing the icon in the program involved creating an "RC" file (containing the line <code>IDR_ICO_MAIN ICON "rtet.ico"</code>), and <a href="http://www.mingw.org/wiki/MS_resource_compiler">compiling it with windres</a>.
+</p>
+<p>
+<img src="/sites/default/files/u3/rteticon.png" width="425" height="346" alt="rteticon.png" />
+</p>
+<p><strong>Installer</strong> - I used Jordan Russell's <a href="http://www.jrsoftware.org/isinfo.php">Inno Setup</a>. This is a superb tool/utility. One tricky thing for me was learning how to add a menu choice to bring up the README.txt.
+</p>
+<p>
+<img src="/sites/default/files/u3/shortcut.png" width="383" height="236" alt="shortcut.png" />
+</p>
+<p>The key was specifying an entry in the "[Icons]" section. The name of the section is misleading, but <a href="http://www.jrsoftware.org/ishelp/">the documentation helps</a> out here.
+</p>
+<p><img src="/sites/default/files/u3/inno.png" width="688" height="399" alt="inno.png" />
+</p>
+<p><strong>Final Build</strong> - During development, my compiler always passed in the "-g" switch, which enables debugging. For the "release" build, I passed the "-O" for an optimized executable file. I also had <a href="http://www.mingw.org/wiki/FAQ#toc6">pass in the -mwindows switch</a> to prevent the CMD window from appearing whenever the program ran. Finally, I ran my executable through <a href="http://wiki.wxwidgets.org/Reducing_Executable_Size">strip, to reduce the final executable size</a>.
+</p>
+<p>Have fun playing it! I sure had fun writing it!</p>

@@ -1,0 +1,35 @@
+---
+title: "Creating Top-Level Variables With CoffeeScript"
+date: 2013-06-23
+tags: ["javascript"]
+permalink: "/blog/2013/06/22/creating-top-level-variables-coffeescript/index.html"
+excerpt: "I've been working on a small \"Word Finder\" game , mostly as exercise to learn CoffeeScript , a language that compiles down to JavaScript. CoffeeScript hides the tricky parts of JavaScript, and brings to the programmer…"
+nid: 66
+nodeType: "story"
+layout: post.njk
+---
+<p>I've been working on <a href="http://rgu.freeshell.org/WordGame/">a small "Word Finder" game</a>, mostly as exercise to learn <a href="http://coffeescript.org/">CoffeeScript</a>, a language that compiles down to JavaScript. CoffeeScript hides the tricky parts of JavaScript, and brings to the programmer the conventions, idioms and conveniences of modern languages like Ruby and Python. I had just finished taking <a href="https://www.coursera.org/course/interactivepython">a course using Python</a>, and I was eager to continue using the style presented by that language.</p>
+
+<p>However, I was confused by how you go about "sharing the code" that you write in CoffeeScript with, say, another piece of JavaScript that a web page might use. <a href="https://github.com/rickumali/WordGame">In the code that I was writing</a>, I had defined a class, and created an object of that class. I now wanted to use that class in another JavaScript file, but when I referenced that object's variable, it said it was not defined.</p>
+
+<img border=1 src="/sites/default/files/u3/coffee-variable-not-defined.png" alt="Picture of Variable Reference Error (Not Defined)"><p/>
+
+<p>Digging into this, I read on the <a href="http://cofeescript.org/">CoffeeScript website</a> that all code in a CoffeeScript file is hidden in an anonymous function. This makes it "exceedingly difficult to pollute the global namespace by accident." But what if I now wanted to make an object available to the global namespace? What if I wanted to share out some parts of my CoffeeScript code to another JavaScript file?</p>
+
+<p>The CoffeeScript website says "If you'd like to create top-level variables for other scripts to use, attach them as properties on window, or on the exports object in CommonJS." Let me try to break this down, taking the CommonJS suggestion first.</p>
+
+<p>Spending a few minutes learning about <a href="http://wiki.commonjs.org/wiki/CommonJS">CommonJS</a> introduced me to the heady world of server-side JavaScript, specifically <a href="http://nodejs.org/">NodeJS</a>. (By way of confession, I'm a newcomer to modern front-end development.) Writing modular JavaScript for NodeJS required solutions for importing ("requires") and exporting modules. These solutions for the server eventually made their way back to the client (i.e. the browser), like <a href="http://requirejs.org/">RequireJS</a>.</p>
+
+<p>Learning these solutions, and retro-fitting my little game to use a modern framework, is something that I knew I'd have to embrace. However, I wanted to explore how to attach variables "as properties on window." It turns out to be <a href="http://stackoverflow.com/questions/3679634/is-setting-properties-on-the-window-object-considered-bad-practice">a "questionable" practice</a>, the end-result being another global variable, but the actual code to add a window property was deceptively easy:</p>
+
+<code linenumbers="off">
+lb = new LettersBlock(10,10)
+
+window.lb = lb
+</code>
+
+<p>Once I had this line, my other JavaScript could reference the variable lb, and all of its functions and variables.</p>
+
+<img border=1 src="/sites/default/files/u3/coffee-window-global.png" alt="Accessing a Global Property from a JavaScript Created from CoffeeScript"><p/>
+
+<p>As I mentioned, I do plan to adopt a more modern JavaScript framework, but this gets me going right now, and I'll take that.</p>

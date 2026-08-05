@@ -1,0 +1,29 @@
+---
+title: "The Importance of the Namespace"
+date: 2009-08-31
+tags: ["xml"]
+permalink: "/blog/2009/08/31/importance-namespace/index.html"
+excerpt: "I was inside XML Notepad, looking at an XML file trying to debug an XSLT issue. I was pretty happy to see that XML Notepad had a Find dialog box that supported XPath. I threw in the XPath for the element I was looking…"
+nid: 43
+nodeType: "story"
+layout: post.njk
+---
+Shakespeare asked "What's in a name? A rose by any another name would smell just as sweet." But he never worked in XML.<p/>
+
+I was inside XML Notepad, looking at an XML file trying to debug an XSLT issue. I was pretty happy to see that XML Notepad had a Find dialog box that supported XPath. I threw in the XPath for the element I was looking for, and it produced a "Not Found" error.<p/>
+
+<img src="/sites/default/files/xpath-notfound.png" alt="XML Notepad cannot find elements with XPath (unless you use the namespace)"></p>
+
+In the picture above, you can see that I'm using this XPath:</p>
+<code linenumbers="off">
+/statistics/index_preparation/stat[attribute::name="Sorts"]
+</code>
+I was confused, especially because the Java program that I was debugging processes this XPath correctly. So why wasn't the XPath working inside of XML Notepad? Staring at the error, I noticed that the message lists the prefixes for the each of the namespaces. In a spark of insight (aided by these references: <a href="http://msdn.microsoft.com/en-us/library/ms950779.aspx">[1]</a> and <a href="http://www.xml.com/pub/a/2001/04/04/trxml/index.html">[2]</a>), I realized that I needed to add the prefixes to each of my elements!<p/>
+
+<img src="/sites/default/files/xpath-found.png" alt="XML Notepad finds elements with XPath provided you use the namespace prefix"></p>
+
+In the picture above, XML Notepad now happily found my element. The XPath is now:</p>
+<code linenumbers="off">
+/a:statistics/a:index_preparation/a:stat[attribute::name="Sorts"]</p>
+</code>
+Adding the namespace helped! If Shakespeare were an XML coder, he'd be saying "A rose by any another name would smell just as sweet, provided you're in the right namespace."<p/>

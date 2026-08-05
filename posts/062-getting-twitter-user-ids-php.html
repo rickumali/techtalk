@@ -1,0 +1,40 @@
+---
+title: "Getting Twitter User IDs with PHP"
+date: 2011-11-26
+tags: ["json", "twitter", "php"]
+permalink: "/blog/2011/11/25/getting-twitter-user-ids-php/index.html"
+excerpt: "When using the Twitter API 's \"Streaming API\" , you often have to pass in Twitter User IDs as arguments, rather than Twitter usernames (aka \"screen name\"). I wrote a small command-line PHP program that obtains Twitter…"
+nid: 62
+nodeType: "story"
+layout: post.njk
+---
+When using the <a href="https://dev.twitter.com/docs/api">Twitter API</a>'s <a href="https://dev.twitter.com/docs/streaming-api/methods">"Streaming API"</a>, you often have to pass in Twitter User IDs as arguments, rather than Twitter usernames (aka "screen name"). I wrote a <a href="/source/2011/11/25/getuseridphp">small command-line PHP program that obtains Twitter User IDs from Twitter usernames</a>. This is what it looks like when you run it:<p/>
+
+<code linenumbers=off>
+$ php getuserid.php rickumali yomamali
+21111241 => Ranniel Umali (yomamali)
+16067265 => Rick Umali (rickumali)
+</code>
+
+I liked writing this little program. There's one line (line 2 below) that reminded me of Perl, for its quirky keyword:<p/>
+
+<code lang="php">
+unset($argv[0]); # Removes the program from the argument array list
+$lookup .= implode(',',$argv); # Comma separate the arguments
+</code>
+
+In Perl, you'd use <a href="http://perldoc.perl.org/functions/join.html">join</a> (with the same arguments) to achieve this (though in PHP the argument array contains the command in the 0th index. I unset this variable in line 1.)<p/>
+
+Another thing that was interesting was PHP's "built-in" JSON support. In general, you should be using JSON to interact with the Twitter API, and you should hope for JSON to be in your PHP already. In my code, I have this:<p/>
+
+<code lang="php">
+$data = json_decode($json);
+if (is_array($data)) {
+  foreach ($data as $user) {
+    print $user->{'id'} . " => " . $user->{'name'} . " (" . $user->{'screen_name'} . ")\n";
+    $id_list[] = $user->{'id'};
+  }
+}
+</code>
+
+I reference the elements (line 4) inside the $user object with the arrow operator because json_decode(), by default, returns objects (not arrays). If I had specified json_decode($json, TRUE), then the user object is a PHP array, and I could then use $user['id'] to obtain the id value.

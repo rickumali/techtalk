@@ -1,0 +1,77 @@
+---
+title: "Best Practice: Keeping an Electronic Notebook"
+date: 2009-09-30
+tags: ["job"]
+permalink: "/blog/2009/09/30/best-practice-keeping-electronic-notebook/index.html"
+excerpt: "My electronic notebook saved me today. I had a technical problem here at work, involving some old internal software. I vaguely remember using this software, but instead of rummaging through old e-mails or polling my…"
+nid: 44
+nodeType: "story"
+layout: post.njk
+---
+<p>My electronic notebook saved me today. I had a technical problem here at work, involving some old internal software. I vaguely remember using this software, but instead of rummaging through old e-mails or polling my co-workers I <a href="http://en.wikipedia.org/wiki/Grep">grepped</a> my electronic notebook. I was able to find notes from the first time I used this software nearly two years ago. Rereading these put enough details into my head to be back "up to speed." I felt pretty smug. Electronic notebooks are my personal "best practice."</p>
+
+<p>So what are these electronic notebooks? They're text files. One text file for every working day. (Each file is named MMDDYY.txt.) Each text file is a running log for what I was doing at the computer that day. This is what my electronic notebook directory looks like:</p>
+
+<img src="/sites/default/files/notebook.png" alt="Screenshot of my Notebook Directory">
+
+<p>Most of what I capture in these files are arcane command lines that I happen to concoct. Here's one from from 2004 (September 30, to be precise), using sed to break up a file with no line breaks on the string "eor".</p>
+
+<code linenumbers="off">
+% cat -n foobar
+     1  Thiseoriseoraeoroneeorlineeorfile.
+
+% sed -e 's/eor/\
+/g' foobar
+This
+is
+a
+one
+line
+file.
+</code>
+
+<p>Another kind of entry that I make are errors that I see, and what I did to resolve them. Here's a C++ compilation error for some code I was trying out (to help with <a href="http://ricktechtalk.nfshost.com/blog/2009/02/09/tetris-game-shaping">my Tetris project</a>):</p>
+
+<code linenumbers="off">
+(BASE) 19:46:19 514> make
+g++  -g  -c -o Picture.o Picture.cpp
+Picture.cpp: In function `Picture operator&(const Picture&, const Picture&)':
+Picture.cpp:127: error: cannot call member function `int Picture::max(int, int)' without object
+make: *** [Picture.o] Error 1
+</code>
+
+<p>The resolution? In my notes I wrote "I needed to make this a STATIC method!" (Translation: In my Picture.h file, I changed "int max(int, int)" to "static int max(int, int)").</p>
+
+<p>My notebook files contain anything and everything that I might want to remember or lookup in the future. It contains people's names, phone numbers, conference bridge lines, WebEx URLs, directory paths, useful websites, book titles, Java CLASSPATHs and (of course) snippets of code. The one nod to "structure" is that for every entry in a file, I separate it with a "*", and a brief message. It's a headline for the notebook entry. Here's the single entry for my first day at work at my new job:</p>
+
+<code linenumbers="off">
+rumali@rumali-t60a /cygdrive/c/DOCUME~1/rumali/MYDOCU~1/Notebook
+(BASE) 13:15:03 660> egrep '^\* ' 042604.txt
+* Weird Cygwin Error When Accessing BASH Without Network
+</code>
+
+<p>Here's the second day (excerpted):</p>
+
+<code linenumbers="off">
+rumali@rumali-t60a /cygdrive/c/DOCUME~1/rumali/MYDOCU~1/Notebook
+(BASE) 13:15:15 662> egrep '^\* ' 042704.txt
+* What Perl is Running When Running update_reference.bat?
+* How to Get Engine (dgraph) Stats
+* Issues with Starting Tomcat on Laptop
+* Installing the Reference Application
+* What Perl is Running When Running update_reference.bat?
+* From Cygwin, Accessing Binaries (jcd)
+* An Alternate to GREP (sed)
+* Debugging: Working Through Forge Error
+* Tomcat: Mucking with Service Installation
+* Debugging: Adding --debug to RunCommand.pl (in .BAT scripts)
+* Getting at JCD Status (http://localhost:8088/status)
+</code>
+
+<p>Separating entries in this manner allows me to glance at a single day's file to see what I might have tackled. Add client names if you're a consultant or sales engineer. Add case numbers if you're in technical support. This ability to produce "sections" adds just enough structure to make things useful. (And as a billable consultant, this sometimes helps with the time keeping.)</p>
+
+<p>The habit of writing notes like these started with my second job out of college. I was doing lots of SQL and UNIX work, and nothing was well documented. That work was perfect for this practice. Reviewing the daily entries reinforced what I was doing. Reviewing the issues and how I got out of them paid off when the same error occurred the next time, whether it was one day later, one week later, or even many years later.</p>
+
+<p>You might put all of these notebook files into a database or search engine, but I wouldn't go through too much trouble. As long as they're textual, you can grab the content using simple tools. The key is simplicity: simple to enter, simple to look up.</p>
+
+<p>I have over 1400 of these files for my current job. This is my raw knowledgebase, a rough copy of what went through my brain.  When I think of all the daily technical habits I have, this is the one with the best dividends.</p>

@@ -1,0 +1,40 @@
+---
+title: "The Process of Elimination"
+date: 2009-04-13
+tags: ["drupal"]
+permalink: "/blog/2009/04/13/process-elimination/index.html"
+excerpt: "A few nights ago, I tried to upgrade the CMS that powers this BLOG ( Drupal ). A Drupal upgrade involves an intricate but manageable series of steps, and since I have UNIX shell access with my hosting provider , it…"
+nid: 39
+nodeType: "story"
+layout: post.njk
+---
+<p>A few nights ago, I tried to upgrade the <a href="http://www.cmsmatrix.org/">CMS</a> that powers this BLOG (<a href="http://drupal.org/">Drupal</a>). A <a href="http://drupal.org/upgrade/">Drupal upgrade</a> involves an intricate but manageable series of steps, and since I have UNIX shell access with <a href="http://www.nearlyfreespeech.net">my hosting provider</a>, it should have been straight-forward. Instead, after finishing the upgrade, my site produced a blank screen with this message: "Zero Sized Reply."</p> 
+
+<p>I think everyone's first instinct these days is to search "the web" for this error. Simple enough, right? Except the error is quite general. It basically means <a href="http://netmirror.org/mirror/squid-www/mail-archive/squid-users/200502/0758.html">"something failed."</a> But what failed? I had just upgraded my Drupal from 6.6 to 6.10, which included upgrading four modules and some theme files. Which one of these changes caused the "Zero Sized Reply" error?</p>
+
+<p>What was even more confusing was that I had run into this upgrade issue before, back in early March. I reverted back to version 6.6, not interested in "debugging" the issue that first time. When I began the upgrade work again, I practiced the install locally, installing all of the CMS software on my PC. The upgrade worked flawlessly on this "testing environment", but to be fair, the environments were pretty different (PHP 4 versus PHP 5, Windows versus UNIX).</p>
+
+<p>So there I was, a "Zero Sized Reply" error staring at me. It was at this point that I started the process of elimination. Maybe the core Drupal software was failing (doubtful). Maybe it was the server configuration. Maybe it was my add-ons. I didn't know where the failure was. In a <a href="https://members.nearlyfreespeech.net/forums/viewtopic.php?t=1188">NearlyFreeSpeech forum post</a>, this interesting recommendation came: replace Drupal's index.php code with some simpler PHP code. I used this:</p>
+
+<code lang="php">
+<html>
+    <head>
+        <title>Rick's Drupal</title>
+    </head>
+    <body>
+        <?php
+        echo "Hi, I'm a PHP script!";
+        ?>
+    </body>
+</html>
+</code>
+
+<p>Now when I accessed any Drupal URLs, my server ran this little script instead of executing Drupal code. And this new index.php got rid of the "Zero Sized Reply" error! Of course, it also effectively got removed Drupal, but at least I definitively eliminated my hosting server's Apache/PHP configuration. The "Zero Sized Reply" error was being caused by software, not server configuration. I restored the index.php.</p>
+
+<p>Since I had four add-on modules, I started the laborious process of eliminating those modules one by one. One of the guiding principles behind the process of elimination is to eliminate one thing at a time. This way you can be assured that the piece you eliminate is the cause of the problem. One by one I removed the four modules (<a href="http://drupal.org/project/views">Views</a>, <a href="http://drupal.org/project/image">Image</a>, <a href="http://drupal.org/project/geshifilter">GeSHi Filter</a>, <a href="http://drupal.org/project/advanced_help">Advanced Help</a>). After each eliminated module, my site continued to exhibit the "Zero Sized Reply" error.</p>
+
+<p>By now, I was discouraged. What was left? The theme I was using, <a href="http://drupal.org/project/zen">Zen</a>, is certainly an add-on to Drupal, but that couldn't cause an error. Or could it? This is the other guiding principle: eliminate <i>everything</i>. So I removed the Theme, and guess what? My site began to function again. It lost its customized style, but at least I can get to the posts again.</p>
+
+<p>As I write this, I have yet to solve the issue. The error is probably due to some change that I must have made while extending the theme that was somehow incompatible with Drupal 6.10 on Linux (because remember, the theme worked for me on Drupal 6.10 on Windows). At least I know where I have to spend my energy. I'm in a better place, thanks to the process of elimination.</a></p>
+
+<p><i>For now, I'm running with a slightly customized Garland theme.</i></p>

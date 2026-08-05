@@ -1,0 +1,37 @@
+---
+title: "Rick Umali's Tetris"
+date: 2011-02-05
+tags: ["c++", "tetris", "game"]
+permalink: "/tetris/index.html"
+excerpt: "I finally finished my version of Tetris . It's a Windows game. To play on your PC, download the installer below."
+nid: 54
+nodeType: "page"
+layout: post.njk
+---
+<p>I finally finished my version of <a href="/tags/tetris">Tetris</a>. It's a Windows game. To play on your PC, download the installer below.</p>
+
+<center><strong><a href="/sites/default/files/u3/rtsetup.exe">rtsetup.exe (766.18 KB)</a></strong></center>
+
+The C++ source code is now on Github below.
+
+<center><strong><a href="https://github.com/rickumali/RicksTetris">Rick's Tetris on Github</a></strong></center>
+
+<h2>Game Play</h2>
+<p/><img src="/sites/default/files/u3/tetris04.png" width="424" height="257" alt="tetris04.png" />
+<p>The game starts out "slow", but it does get frantic by the time you get to level 5. It takes only 10 cleared lines to increase the level, so after that easy first level, you're going to need to concentrate.</p>
+
+<h2>Shape Statistics</h2>
+<p/><img src="/sites/default/files/u3/shapesstatsfin.png" width="375" height="234" alt="shapesstatsfin.png" />
+<p>I thought counting the number of each shape as it appeared would be a great thing to see. Now that I built this feature, I question its usefulness. The game currently draws from <a href="http://tetris.wikia.com/wiki/Random_Generator">a "bag" of seven shapes</a>, and when the bag is empty, a new set of seven shapes is tossed into the bag. By the end of the game, the shapes are going to be roughly equal, which is what the stats show. What I really have to build is the "preview next shape" window.</p>
+
+<h2>Implementation</h2>
+<p/><img src="/sites/default/files/u3/implement.png" width="375" height="242" alt="implement.png" />
+<p>I followed <a href="http://tetris.wikia.com/wiki/Tetris_Wiki">the Tetris Wiki</a>, which taught me all I know about the tetrominoes, the scoring system, and the actual "mechanics" of the game.</p>
+
+<p>The game is written in C++, using the <a href="http://www.mingw.org/">Minimalist GNU for Windows (MinGW)</a>. I used <a href="http://www.vim.org/">Vim</a> (and yes, by the end, I missed using an <a href="http://en.wikipedia.org/wiki/Integrated_development_environment">IDE</a>). I used the <a href="http://www.libsdl.org/">Simple DirectMedia Layer (SDL)</a> for the graphics. The installer is Jordan Russell's <a href="http://www.jrsoftware.org/isinfo.php">Inno Setup</a>. My C++ source code is available at <a href="https://github.com/rickumali/RicksTetris">Github</a>.</p>
+
+<p>The <a href="http://lazyfoo.net/SDL_tutorials/index.php">Lazy Foo SDL Tutorials</a> and André Lamothe's <a href="http://www.amazon.com/gp/product/0672323699?ie=UTF8&tag=ricksrambling-20&linkCode=as2&camp=1789&creative=390957&creativeASIN=0672323699">Tricks of the Windows Game Programming Gurus (2nd Edition)</a><img src="http://www.assoc-amazon.com/e/ir?t=ricksrambling-20&l=as2&o=1&a=0672323699" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /> helped me "get up to speed."
+</p>
+
+<h2>What's Next?</h2>
+There's lots next! Sound. Score display. Better animation. Configurable scoring systems. Controlled free fall. But what's likely next is my implementation of <a href="http://www.3dvia.com/studio/resource/example-projects/build-a-breakout-game">Breakout</a>.

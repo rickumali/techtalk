@@ -1,0 +1,74 @@
+---
+title: "Fixing Blank Previews on My Website"
+date: 2010-10-31
+tags: ["perl", "rss"]
+permalink: "/blog/2010/10/31/fixing-blank-previews-my-website/index.html"
+excerpt: "My vanity website reads various RSS feeds, displaying a preview of their content. I use HTML::TokeParser to break apart the HTML inside the RSS feed. One RSS feed is from my sports BLOG , but a recent change (the BLOG…"
+nid: 52
+nodeType: "story"
+layout: post.njk
+---
+<p><a href="http://www.rickumali.com/">My vanity website</a> reads various RSS feeds, displaying a preview of their content. I use <a href="http://search.cpan.org/~gaas/HTML-Parser-3.68/lib/HTML/TokeParser.pm">HTML::TokeParser</a> to break apart the HTML inside the RSS feed. One RSS feed is from <a href="http://fans.rowdy.com/rickumali/blog">my sports BLOG</a>, but a recent change (the BLOG moved from one site to another) started causing the preview text to be blank. </p>
+<p>What I should be seeing is:<br/>
+<br/>
+<b>Title Story 1</b><br/>
+This is some preview text for the first story.<br/>
+<b>Title Story 2</b><br/>
+This is some preview text for the second story.<br/>
+</p>
+<p>Instead, I was seeing:<br/>
+<br/>
+<b>Title Story 1</b><br/>
+<b>Title Story 2</b><br/>
+</p>
+<p>Below is an image from my website that shows the problem.</p>
+<img src="/sites/default/files/u3/blankpreviews.JPG" alt="The problem of missing preview text.">
+<p>Where is the text under the first three stories?</p>
+<p>Clearly <a href="http://search.cpan.org/~gaas/HTML-Parser-3.68/lib/HTML/TokeParser.pm">HTML::TokeParser</a> was working for some of the inputs. Here is the code that I use to retrieve the text from the <a href="http://cyber.law.harvard.edu/rss/encodingDescriptions.html">RSS description element</a>:</p>
+<code lang="perl" linenumbers="off">
+	my $text_stream = HTML::TokeParser->new(\$entry->{"description"});
+	my $text = $text_stream->get_phrase();
+</code>
+<p>I'm using get_phrase() to get the text. The documentation for get_phrase() says "This will return all text found at the current position ignoring any phrasal-level tags. Text is extracted until the first non phrasal-level tag."</p>
+<p>Something must be different in the HTML entries of my RSS items. For the entries producing blank preview text, I saw this:</p>
+<code lang="html" linenumbers="off">
+<description>&lt;p&gt;The Giants won an extraordinary Game 6...
+</code>
+<p>The characters before "The Giants" is the paragraph HTML element (&lt;p&gt;), written out with <a href="http://www.w3schools.com/tags/ref_entities.asp">entities</a>.</p>
+<p>For the entries producing correct preview text, I saw this:</p>
+<code lang="html" linenumbers="off">
+<description>Jerry Rice enters the Pro Football Hall of Fame...
+</code>
+<p>Notice that there is no paragraph element! That would turn out to be a big difference. In the <a href="http://search.cpan.org/~gaas/HTML-Parser-3.68/lib/HTML/TokeParser.pm">HTML::TokeParser documentation</a>, I read some guidance on identifying non phrasal-level tags: "The definition of phrasal-level tags is obtained from the <a href="http://search.cpan.org/~petdance/HTML-Tagset-3.20/Tagset.pm">HTML::Tagset</a> module."</p>
+<p>I look inside <a href="http://cpansearch.perl.org/src/PETDANCE/HTML-Tagset-3.20/Tagset.pm">HTML::Tagset</a>, and find this:</p>
+<code lang="perl" linenumbers="off">
+%isPhraseMarkup = map {; $_ => 1 } qw(
+  span abbr acronym q sub sup
+  cite code em kbd samp strong var dfn strike
+  b i u s tt small big 
+  a img br
+  wbr nobr blink
+  font basefont bdo
+  spacer embed noembed
+);  # had: center, hr, table
+</code>
+<p>The get_phrase() function basically stops when it finds an HTML tag that is not a phrase, and the paragraph element (&lt;p&gt;) is not a phrasal tag! To test this understanding, I modify the code slightly:</p>
+<code lang="perl" linenumbers="off">
+	my $text_stream = HTML::TokeParser->new(\$entry->{"description"});
+	my $tok_ary = $text_stream->get_token();
+	print "\tTOKEN ARRAY 0: @{$tok_ary}[0]\n" if $opt_debug;
+	my $text = $text_stream->get_phrase();
+</code>
+<p>What I saw is that for the items that did produce a good preview text, the debug output produced "T", but for the items that caused the problem, the debug output produced "S". "T" stands for "text", and "S" stands for "start (of tag)".</p>
+<p>I then observed that the code change above began producing correct preview text! By writing this test, I managed to fix it! How? get_token() consumes the token! (I also observed that this test broke the preview text for the items that were originally working.) Given all these observations, I wound up using this as the fix:</p>
+<code lang="perl" linenumbers="off">
+	my $text_stream = HTML::TokeParser->new(\$entry->{"description"});
+	my $tok_ary = $text_stream->get_token();
+	if (@{$tok_ary}[0] eq "T") {
+		$text_stream->unget_token($tok_ary);
+	}
+	my $text = $text_stream->get_phrase();
+</code>
+<p>This change basically consumes the first token unless it's a piece of text, in which case it "ungets" the token. With this change, previews began appearing properly:</p>
+<img src="/sites/default/files/u3/correctedpreviews.JPG" alt="Corrected preview text." />
+<p>Solving this little problem relies on a few key practices that I try to follow. Number one: read and think about what exactly the documentation is saying. In this case, I had to resort to some source code, but the key is to read the available documentation for whatever library or system you're using, and think about it. Number two: make small changes to test your understanding. In this case, just the one small change proved to be enough!</p>

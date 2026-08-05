@@ -1,0 +1,45 @@
+---
+title: "getuserid.php"
+date: 2011-11-26
+tags: ["php", "twitter"]
+permalink: "/source/2011/11/25/getuseridphp/index.html"
+excerpt: ""
+nid: 61
+nodeType: "source_code"
+layout: post.njk
+---
+<pre><code class="language-php">&lt;?php
+/**
+ * getuserid.php username1 username2 ... usernameN 
+ *
+ * This program takes Twitter usernames, and obtains their ids.
+ *
+ * See:
+ * 
+ * https://dev.twitter.com/docs/api/1/get/users/lookup
+ */
+if ($argc == 1) {
+  exit(&quot;No args passed!&quot;);
+}
+
+unset($argv[0]); # Removes the program from the argument array list
+
+$lookup = &quot;http://api.twitter.com/1/users/lookup.json?screen_name=&quot;;
+$lookup .= implode(&#x27;,&#x27;,$argv); # Comma separate the arguments
+$lookup .= &quot;&amp;include_entities=false&quot;;
+
+$json = file_get_contents($lookup);
+$data = json_decode($json);
+if (is_array($data)) {
+  foreach ($data as $user) {
+    # NOTE: Use the following if using assoc=true in json_decode()
+    # print $user[&#x27;id&#x27;] . &quot; =&gt; &quot; . $user[&#x27;name&#x27;] . &quot; (&quot; . $user[&#x27;screen_name&#x27;] . &quot;)\n&quot;;
+    # $id_list[] = $user[&#x27;id&#x27;];
+
+    # NOTE: Use the following if using json_decode()&#x27;s default
+    # for assoc, which returns &quot;objects&quot; 
+    print $user-&gt;{&#x27;id&#x27;} . &quot; =&gt; &quot; . $user-&gt;{&#x27;name&#x27;} . &quot; (&quot; . $user-&gt;{&#x27;screen_name&#x27;} . &quot;)\n&quot;;
+    $id_list[] = $user-&gt;{&#x27;id&#x27;};
+  }
+}
+?&gt;</code></pre>

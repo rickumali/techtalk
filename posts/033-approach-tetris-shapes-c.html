@@ -1,0 +1,91 @@
+---
+title: "An Approach for Tetris Shapes in C++"
+date: 2009-02-01
+tags: ["source", "code", "tetris", "c++"]
+permalink: "/blog/2009/02/01/approach-tetris-shapes-c/index.html"
+excerpt: "I've been noodling with a Win32 version of Tetris , the ubiquitous \"shape placing\" game. I'm working in C++ using the Simple Directmedia Layer for my graphics. One of the interesting things in working out the game is…"
+nid: 33
+nodeType: "story"
+layout: post.njk
+---
+<p>I've been noodling with a Win32 version of <a href="http://en.wikipedia.org/wiki/Tetris">Tetris</a>, the ubiquitous "shape placing" game. I'm working in C++ using the <a href="http://www.libsdl.org/">Simple Directmedia Layer</a> for my graphics. One of the interesting things in working out the game is the "shape" data. Below is the code for one my shapes, and the methods to "rotate" and "draw" it.</p>
+<code language="cpp">
+/*
+ * LeftEll is the piece that looks like this
+ *
+ * ##
+ * ##
+ * ####
+ */
+
+LeftEll::LeftEll()  : Shape ()
+{
+  shape_height[0] = 3;
+  shape_height[1] = 2;
+  shape_height[2] = 3;
+  shape_height[3] = 2;
+  shape_width[0] = 2;
+  shape_width[1] = 3;
+  shape_width[2] = 2;
+  shape_width[3] = 3;
+  shape_data[0] = "# # ##";
+  shape_data[1] = "####  ";
+  shape_data[2] = "## # #";
+  shape_data[3] = "  ####";
+}
+
+int LeftEll::rotate_left() 
+{
+  rotate(-1);
+}
+
+void LeftEll::draw(int start_x, int start_y) 
+{
+  for (int row = 0; row < shape_height[rotation]; row++) {
+    for (int col = 0; col < shape_width[rotation]; col++) {
+      cout << shape_data[rotation][(row*shape_width[rotation])+col];
+    }
+    cout << endl;
+  }
+}
+</code>
+<p>For some reason, I was pretty happy with this, especially when my testing produced the correct behavior. (Note the "rotate" method just loops through the numbers 0, 1, 2, and 3, which correspond to a shape's four possible positions.)</p>
+<code>
+C:\cygwin\home\rumali\MinGW\tetris
+ 9:46:03.62 > testshape
+(1) Square, (2) Pyramid,
+(3) Left Slant, (4) Right Slant,
+(5) Long Row,
+(6) Left Ell, (7) Right Ell,
+(q)uit
+6
+(l)eft rotate, (r)ight rotate, (d)raw
+d
+#
+#
+##
+(1) Square, (2) Pyramid,
+(3) Left Slant, (4) Right Slant,
+(5) Long Row,
+(6) Left Ell, (7) Right Ell,
+(q)uit
+6
+(l)eft rotate, (r)ight rotate, (d)raw
+l
+LeftEll::rotation = 3
+  #
+###
+(1) Square, (2) Pyramid,
+(3) Left Slant, (4) Right Slant,
+(5) Long Row,
+(6) Left Ell, (7) Right Ell,
+(q)uit
+6
+(l)eft rotate, (r)ight rotate, (d)raw
+l
+LeftEll::rotation = 2
+##
+ #
+ #
+</code>
+<p>However, the more I thought about it, the more I realized that I was simply hardcoding the shape diagrams for each rotation. Couldn't I store the start rotation once, and just derive the other rotations? As I pondered this, I realized that the answer would involve <a href="http://en.wikipedia.org/wiki/Rotation_matrix#The_2-dimensional_rotation_matrix">matrix algebra</a>. I studied this in school, but that was ages ago. I'm sure more searching would yield an algorithm (and rotating in arbitrary 90 degree "increments" reduces the complexity), but my proggie is a toy, running on Win32. If my game were targeted for a handheld, I may need to worry about that extra 18 bytes that my code is using, trading that off against the CPU cycles that an algorithm would need to calculate the new shape data. So in the end, I decided to remain happy with it. For now.</p>

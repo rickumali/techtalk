@@ -1,0 +1,243 @@
+---
+title: "trianglefan.cpp"
+date: 2011-10-31
+tags: ["c++"]
+permalink: "/source/2010/07/12/trianglefancpp/index.html"
+excerpt: ""
+nid: 59
+nodeType: "source_code"
+layout: post.njk
+---
+<pre><code class="language-cpp">//-----------------------------------------------------------------------------
+// File: TriangleFan.cpp
+//
+// This is based on Vertices.cpp, and it draws a Triangle Fan from the Engel
+// book.
+//-----------------------------------------------------------------------------
+#include &lt;d3d9.h&gt;
+#pragma warning( disable : 4996 ) // disable deprecated warning 
+#include &lt;strsafe.h&gt;
+#pragma warning( default : 4996 )
+
+
+
+
+//-----------------------------------------------------------------------------
+// Global variables
+//-----------------------------------------------------------------------------
+LPDIRECT3D9             g_pD3D = NULL; // Used to create the D3DDevice
+LPDIRECT3DDEVICE9       g_pd3dDevice = NULL; // Our rendering device
+LPDIRECT3DVERTEXBUFFER9 g_pVB = NULL; // Buffer to hold Vertices
+
+// A structure for our custom vertex type
+struct CUSTOMVERTEX
+{
+    FLOAT x, y, z, rhw; // The transformed position for the vertex
+    DWORD color;        // The vertex color
+};
+
+// Our custom FVF, which describes our custom vertex structure
+#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZRHW|D3DFVF_DIFFUSE)
+
+
+
+
+//-----------------------------------------------------------------------------
+// Name: InitD3D()
+// Desc: Initializes Direct3D
+//-----------------------------------------------------------------------------
+HRESULT InitD3D( HWND hWnd )
+{
+    // Create the D3D object.
+    if( NULL == ( g_pD3D = Direct3DCreate9( D3D_SDK_VERSION ) ) )
+        return E_FAIL;
+
+    // Set up the structure used to create the D3DDevice
+    D3DPRESENT_PARAMETERS d3dpp;
+    ZeroMemory( &amp;d3dpp, sizeof( d3dpp ) );
+    d3dpp.Windowed = TRUE;
+    d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
+    d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
+
+    // Create the D3DDevice
+    if( FAILED( g_pD3D-&gt;CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd,
+                                      D3DCREATE_SOFTWARE_VERTEXPROCESSING,
+                                      &amp;d3dpp, &amp;g_pd3dDevice ) ) )
+    {
+        return E_FAIL;
+    }
+
+    // Device state would normally be set here
+
+    return S_OK;
+}
+
+
+//-----------------------------------------------------------------------------
+// Name: InitVB()
+// Desc: Creates a vertex buffer and fills it with our Vertices. The vertex
+//       buffer is basically just a chuck of memory that holds Vertices. After
+//       creating it, we must Lock()/Unlock() it to fill it. For indices, D3D
+//       also uses index buffers. The special thing about vertex and index
+//       buffers is that they can be created in device memory, allowing some
+//       cards to process them in hardware, resulting in a dramatic
+//       performance gain.
+//-----------------------------------------------------------------------------
+HRESULT InitVB()
+{
+    // Initialize three Vertices for rendering a triangle
+	// NOTE: 1-4-3-2 produces the &quot;fan&quot;, with default CULLMODE (CCW)
+	// NOTE: 1-4-2-3 produces ONE triangle, with the other one &quot;hidden&quot; (or culled). If you 
+	// set RenderState(D3DRS_CULLMODE, D3DCULL_CW), you&#x27;ll see the 1-2-3 triangle. If you set 
+	// RenderState(D3DRS_CULLMODE, D3DCULL_NONE) you will see BOTH triangles, with the 1-2-3 triangle &quot;folded in&quot;
+	// NOTE: 1-2-3-4 will ONLY work if you set RenderState(D3DRS_CULLMODE, D3DCULL_NONE) or RenderState(D3DRS_CULLMODE, D3DCULL_CW)
+    CUSTOMVERTEX Vertices[] =
+    {
+		{ 109.0f,  43.0f, 0.5f, 1.0f, 0xffff0000, }, // 1: x, y, z, rhw, color // red
+		{ 192.0f, 205.0f, 0.5f, 1.0f, 0xffffff00, }, // 4: 	    
+		{ 101.0f, 250.0f, 0.5f, 1.0f, 0xff00ffff, }, // 3: blue
+		{ 26.0f,  204.0f, 0.5f, 1.0f, 0xff00ff00, }, // 2: green
+		
+    };
+
+    // Create the vertex buffer. Here we are allocating enough memory
+    // (from the default pool) to hold all our 3 custom Vertices. We also
+    // specify the FVF, so the vertex buffer knows what data it contains.
+    if( FAILED( g_pd3dDevice-&gt;CreateVertexBuffer( 4 * sizeof( CUSTOMVERTEX ),
+                                                  0, D3DFVF_CUSTOMVERTEX,
+                                                  D3DPOOL_DEFAULT, &amp;g_pVB, NULL ) ) )
+    {
+        return E_FAIL;
+    }
+
+    // Now we fill the vertex buffer. To do this, we need to Lock() the VB to
+    // gain access to the Vertices. This mechanism is required becuase vertex
+    // buffers may be in device memory.
+    VOID* pVertices;
+    if( FAILED( g_pVB-&gt;Lock( 0, sizeof( Vertices ), ( void** )&amp;pVertices, 0 ) ) )
+        return E_FAIL;
+    memcpy( pVertices, Vertices, sizeof( Vertices ) );
+    g_pVB-&gt;Unlock();
+
+    return S_OK;
+}
+
+
+
+
+//-----------------------------------------------------------------------------
+// Name: Cleanup()
+// Desc: Releases all previously initialized objects
+//-----------------------------------------------------------------------------
+VOID Cleanup()
+{
+    if( g_pVB != NULL )
+        g_pVB-&gt;Release();
+
+    if( g_pd3dDevice != NULL )
+        g_pd3dDevice-&gt;Release();
+
+    if( g_pD3D != NULL )
+        g_pD3D-&gt;Release();
+}
+
+
+
+
+//-----------------------------------------------------------------------------
+// Name: Render()
+// Desc: Draws the scene
+//-----------------------------------------------------------------------------
+VOID Render()
+{
+    g_pd3dDevice-&gt;Clear( 0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB( 0, 0, 0 ), 1.0f, 0 );
+
+    // Begin the scene
+    if( SUCCEEDED( g_pd3dDevice-&gt;BeginScene() ) )
+    {
+		g_pd3dDevice-&gt;SetRenderState( D3DRS_FILLMODE, D3DFILL_SOLID ); // NOTE: Added
+		// g_pd3dDevice-&gt;SetRenderState( D3DRS_CULLMODE, D3DCULL_NONE); // NOTE: Added (D3DCULL_CCW is default)
+        g_pd3dDevice-&gt;SetStreamSource( 0, g_pVB, 0, sizeof( CUSTOMVERTEX ) );
+        g_pd3dDevice-&gt;SetFVF( D3DFVF_CUSTOMVERTEX );
+		g_pd3dDevice-&gt;DrawPrimitive( D3DPT_TRIANGLEFAN, 0, 2 );
+
+        // End the scene
+        g_pd3dDevice-&gt;EndScene();
+    }
+
+    // Present the backbuffer contents to the display
+    g_pd3dDevice-&gt;Present( NULL, NULL, NULL, NULL );
+}
+
+
+
+
+//-----------------------------------------------------------------------------
+// Name: MsgProc()
+// Desc: The window&#x27;s message handler
+//-----------------------------------------------------------------------------
+LRESULT WINAPI MsgProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+{
+    switch( msg )
+    {
+        case WM_DESTROY:
+            Cleanup();
+            PostQuitMessage( 0 );
+            return 0;
+    }
+
+    return DefWindowProc( hWnd, msg, wParam, lParam );
+}
+
+
+
+
+//-----------------------------------------------------------------------------
+// Name: wWinMain()
+// Desc: The application&#x27;s entry point
+//-----------------------------------------------------------------------------
+INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT )
+{
+    // Register the window class
+    WNDCLASSEX wc =
+    {
+        sizeof( WNDCLASSEX ), CS_CLASSDC, MsgProc, 0L, 0L,
+        GetModuleHandle( NULL ), NULL, NULL, NULL, NULL,
+        L&quot;TriangleFan&quot;, NULL
+    };
+    RegisterClassEx( &amp;wc );
+
+    // Create the application&#x27;s window
+	HWND hWnd = CreateWindow( L&quot;TriangleFan&quot;, L&quot;Triangle Fan: Demo&quot;,
+                              WS_OVERLAPPEDWINDOW, 100, 100, 300, 300,
+                              NULL, NULL, wc.hInstance, NULL );
+
+    // Initialize Direct3D
+    if( SUCCEEDED( InitD3D( hWnd ) ) )
+    {
+        // Create the vertex buffer
+        if( SUCCEEDED( InitVB() ) )
+        {
+            // Show the window
+            ShowWindow( hWnd, SW_SHOWDEFAULT );
+            UpdateWindow( hWnd );
+
+            // Enter the message loop
+            MSG msg;
+            ZeroMemory( &amp;msg, sizeof( msg ) );
+            while( msg.message != WM_QUIT )
+            {
+                if( PeekMessage( &amp;msg, NULL, 0U, 0U, PM_REMOVE ) )
+                {
+                    TranslateMessage( &amp;msg );
+                    DispatchMessage( &amp;msg );
+                }
+                else
+                    Render();
+            }
+        }
+    }
+
+    UnregisterClass( L&quot;TriangleFan&quot;, wc.hInstance );
+    return 0;
+}</code></pre>

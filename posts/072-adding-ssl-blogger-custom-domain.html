@@ -1,0 +1,26 @@
+---
+title: "Adding SSL to Blogger with Custom Domain"
+date: 2025-02-04
+tags: ["SSL", "DNS", "blog", "domain", "HTTPS"]
+permalink: "/blog/2025/02/03/adding-ssl-blogger-custom-domain/index.html"
+excerpt: "For the longest time, my BLOG at https://blog.rickumali.com/ did not have HTTPS/SSL. With the emergence of LetsEncrypt in 2016 , and the general awareness that SSL was better, I've long wanted to add SSL to my BLOG…"
+nid: 72
+nodeType: "story"
+layout: post.njk
+---
+<p>For the longest time, my BLOG at <a href="https://blog.rickumali.com/">https://blog.rickumali.com/</a> did not have HTTPS/SSL. With the emergence of <a href="https://letsencrypt.org/2023/05/24/isrg-10th-anniversary/">LetsEncrypt in 2016</a>, and the general awareness that SSL was better, I've long wanted to add SSL to my BLOG. However, the great difficulty was that the hosting provider for my domain (<code>rickumali.com</code>) did not host my BLOG content. Instead, since I used  <a href="https://blogger.com">Blogger (Google)</a> to 'host' my content, I <i>pointed</i> to Google via my hosting provider's DNS settings.</p>
+<p>I got stuck with the thought that I'd need to provision the certificate and host it on my domain. I did not know how to solve this problem. But luckily after some Google searching I found <a href="https://support.google.com/blogger/thread/26980591/how-do-i-turn-on-https-on-my-custom-non-google-domain?hl=en">a post that said "...you do not need SSL certificates as this is provided by Blogger platform for free for all blogs."</a> Incredible! This functionality was hiding in plain sight! </p>
+<p>The post pointed to Google documentation that described how to configure custom domains. Since I was already using a custom domain, in the Blogger settings I saw this:</p>
+<p><img src="/sites/default/files/u3/custom-domain.png" width="323" alt="Custom Domain setting in Blogger" /></p>
+<p>However, a little further down in the Blogger settings, I saw "HTTPS" as "Unavailable". I stared at this and then tried something a bit dramatic. I deleted my custom domain! My thinking here was that my BLOG was set up so long ago that maybe I missed something when I added this configuration. After deleting the custom domain, my BLOG's URL stopped working. That was expected. I then added the custom domain. This time I saw the "error" mentioned in the documentation ("You get an error with 2 CNAMEs"):</p>
+<p><img src="/sites/default/files/u3/error-with-2-CNAMEs.png" width="640" alt="Error with 2 CNAMEs" /></p>
+<p>The red text ('error') said "We have not been able to verify your authority for this domain. On your domain registrar's website, locate your Domain Name System (DNS) settings and enter the following two CNAMEs: (Name: blog, Destination: ghs.google.com) and (Name: bq...b, Destination: gv-....dv.googlehosted.com)." I noticed that pressing Save repeatedly displayed the same error, with the same name and destinations. I could even press Cancel and re-enter my custom domain name and have the same name and destinations in the error. </p>
+<p>This made sense. My hosting provider (<a href="https://www.netatlantic.com">NetAtlantic</a>) provided access to DNS configuration via <a href="https://cpanel.net/">the cPanel user interface</a>. When I looked in there, I found that <i>I had only one</i> of these two CNAME records, the one for Name ("blog"). Also, per the picture, the Name was not just "blog", but "blog.rickumali.com" (where rickumali.com was my custom domain name). </p>
+<p> <img src="/sites/default/files/u3/cpanel-dns-zone-editor.png" width="640" alt="cPanel DNS Zone Editor" /></p>
+<p>I added the second CNAME record with the coded name and the coded destination. Once I did that, I went back to the Blogger settings 'Custom Domain' error. It was still displaying on the Blogger settings page. I clicked "Save" for Custom Domain, but the error still appeared. I knew to wait, because <a href="https://www.digicert.com/faq/dns/what-is-dns-propagation">DNS records need time to propagate.</a> In my case, it took about ten minutes. At that point, pressing "Save" for Custom Domain worked!</p>
+<p><img src="/sites/default/files/u3/pending-https.png" width="640" alt="HTTPS availability is being processed." /></p>
+<p>I went to the the "HTTPS" settings and turned it on. However, I got a message saying "Pending - HTTPS Availability is being processed. Check back later." I refreshed the page a few times, and again, after a few minutes I saw a yellow stripe message saying "Your HTTPS settings have changed. All visitors are now able to view your blog over an encrypted connection..."</p>
+<p><img src="/sites/default/files/u3/yellow-stripe-success.png" width="640" alt="Yellow Stripe message. Success!" /></p>
+<p>Success! The BLOG is now served via HTTPS, and the certificate was generated and is valid.</p>
+<p><img src="/sites/default/files/u3/cert-is-valid-success.png" width="519" alt="Certificate is valid. Success!" /> </p>
+

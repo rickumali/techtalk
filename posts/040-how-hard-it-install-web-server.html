@@ -1,0 +1,103 @@
+---
+title: "How Hard is it to Install a Web Server?"
+date: 2009-04-15
+tags: ["linux"]
+permalink: "/blog/2009/04/15/how-hard-it-install-web-server/index.html"
+excerpt: "Today I was in RPM Hell , a punishing landscape even when you know what you're doing. And unfortunately for me, I only barely know what I'm doing."
+nid: 40
+nodeType: "story"
+layout: post.njk
+---
+<p>Today I was in <a href="http://www.germane-software.com/~ser/Files/Essays/RPM_Hell.html">RPM Hell</a>, a punishing landscape even when you know what you're doing. And unfortunately for me, I only barely know what I'm doing.</p>
+
+<p>Rewinding the clock: I was on a <a href="http://www.redhat.com/docs/manuals/enterprise/RHEL-4-Manual/selinux-guide/">RHEL4</a> server, but it somehow didn't have the <a href="httpd.apache.org">Apache Web Server (httpd)</a> installed on it. I hunted around for a binary HTTPD (no, my server didn't have a compiler). After I found it, I tried to install it:</p>
+
+<code lang="bash" linenumbers="off">
+% rpm -i httpd-2.2.2-1.x86_64.rpm
+warning: httpd-2.2.2-1.x86_64.rpm: V3 DSA signature: NOKEY, key ID 751d7f27
+error: Failed dependencies:
+        apr >= 1.2.0 is needed by httpd-2.2.2-1.x86_64
+        apr-util >= 1.2.0 is needed by httpd-2.2.2-1.x86_64
+        libapr-1.so.0()(64bit) is needed by httpd-2.2.2-1.x86_64
+        libaprutil-1.so.0()(64bit) is needed by httpd-2.2.2-1.x86_64
+        libpq.so.3()(64bit) is needed by httpd-2.2.2-1.x86_64
+    Suggested resolutions:
+        /var/spool/up2datepostgresql-libs-7.4.17-1.RHEL4.1.x86_64.rpm
+</code>
+
+<p>I probably only merit a <a href="http://www.usscouts.org/advance/boyscout/bsranks.asp">Tenderfoot</a> rank when it comes to system administrator skills, but I knew what my next few hours looked like: I'd have to hunt around and locate these missing dependencies, and individually install them. One by one.</p>
+
+<p>I only made it through the first dependency (apr) before I quit in frustration. The apr-util RPM depended on libpq.so.3, and that had me digging around for <a href="http://www.postgresql.org">PostgreSQL</a> RPMs. In turn, that RPM demanded some Crypto libraries. It felt like I peeling a never-ending onion. It felt like I was inside <a href="http://www.worldofescher.com/gallery/">an Escher painting</a>.</p> 
+
+<p>Since I still wanted to have an Apache Web Server, I looked around for an alternative distribution, and I was happy to see <a href="http://www.apachefriends.org/en/xampp-linux.html">XAMPP for Linux</a>. XAMPP is a nifty package of software for people who just want an "all-in-one" installation so they can do some <a href="http://www.webopedia.com/TERM/L/LAMP.html">LAMP development</a>. I have installed the components that make up LAMP many times individually, but when I first tried out XAMPP I thought "how easy was that?"</p>
+
+<p>XAMPP for Linux offered a way out of RPM Hell. Its compressed tar ball contained all of its dependcies, and its start-up was easy:</p>
+
+<code lang="bash" linenumbers="off">
+% tar zxf xampp-linux-1.7.1.tar.gz -C /opt
+% cd /opt/lampp
+% ./lampp start
+</code>
+
+<p>However, when I did the start-up command, I saw this error:</p>
+
+<code linenumbers="off">
+% ./lampp start
+Starting XAMPP for Linux 1.7.1...
+XAMPP: Starting Apache with SSL (and PHP5)...
+XAMPP: Starting MySQL...
+libgcc_s.so.1 must be installed for pthread_cancel to work
+XAMPP: Couldn't start MySQL!
+XAMPP: Starting ProFTPD...
+XAMPP for Linux started.
+</code>
+
+<p>The error was definitely caused by MySQL (the "M" in LAMP). The missing file had the ".so" suffix, which meant <a href="http://www.yolinux.com/TUTORIALS/LibraryArchives-StaticAndDynamic.html">shared library</a>, which meant <i>more RPM madness</i>. After a quick walk around <a href="http://www.riverfrontofficepark.com/toc.cfm">the building to clear my steaming head</a>, I did quick check for this file on my Linux box.</p>
+
+<code lang="bash" linenumbers="off">
+% rpm -q libgcc-3.4.6-9 -l
+/lib64/libgcc_s-3.4.6-20060404.so.1
+/lib64/libgcc_s.so.1
+/usr/sbin/libgcc_post_upgrade
+/usr/share/doc/libgcc-3.4.6
+/usr/share/doc/libgcc-3.4.6/COPYING.LIB
+</code>
+
+<p>The above interaction suggested to me that I was on a 64-bit Linux server. I knew that (and confirm that with the output of the uname command):</p>
+
+<code linenumbers="off">
+Linux rhel4-lbox 2.6.9-67.ELsmp #1 SMP Wed Nov 7 13:56:44 EST 2007 x86_64 x86_64 x86_64 GNU/Linux
+</code>
+
+<p>After wandering through some forum posts <a href="http://forum.teamspeak.com/showthread.php?t=40875">[1]</a> <a href="http://forums.fedoraforum.org/showthread.php?t=181558">[2]</a>, I came to the conclusion that XAMPP for Linux shipped 32-bit executables. It was trying to find a 32-bit libgcc_s.so. The libgcc_s.so in /lib64 wouldn't work. Examining the MySQL executable confirms this:</p>
+
+<code lang="bash" linenumbers="off">
+% file /opt/lampp/sbin/mysqld
+mysqld: ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), for GNU/Linux 2.4.1, dynamically linked (uses shared libs), stripped
+</code>
+
+<p>So how hard would it be to find a 32-bit version of this shared library? With the proliferation of Linux distributions, and the proliferation of RPM sites, it would prove moderately difficult. Eventually, using the search terms "rhel4 rpms libgcc_s", I found what I was looking for: <a href="http://rpm.pbone.net/index.php3/stat/4/idpl/5773944/com/libgcc-3.4.6-3.1.i386.rpm.html">a 32-bit version</a> of this shared library.</p>
+
+<p>Installing it involved using rpm's "force" switch. That put the shared object in the lib directory:</p>
+
+<code linenumbers="off">
+% rpm -i -p libgcc-3.4.6-3.1.i386.rpm
+        package libgcc-3.4.6-9 (which is newer than libgcc-3.4.6-3.1) is already installed
+% rpm -i -p libgcc-3.4.6-3.1.i386.rpm --force
+% rpm -q libgcc-3.4.6-3.1 -l
+/lib/libgcc_s-3.4.6-20060404.so.1
+/lib/libgcc_s.so.1
+/usr/sbin/libgcc_post_upgrade
+/usr/share/doc/libgcc-3.4.6
+/usr/share/doc/libgcc-3.4.6/COPYING.LIB
+</code>
+
+<p>For good measure, I updated the shared library cache by typing "/sbin/ldconfig". After all of this work, I was able to get the correct behavior:</p>
+
+<code lang="bash" linenumbers="off">
+% cd /opt/lampp
+% ./lampp startmysql
+XAMPP: Starting MySQL...
+</code>
+
+<p>Scaling this XAMPP installation issue left me with some feeling of accomplishment, but for the most part I'm thinking: did it have to be this hard to install a web server?</p>

@@ -1,0 +1,33 @@
+---
+title: "Hiding HTML Using Data URIs and base64"
+date: 2011-05-29
+tags: ["URI", "base64"]
+permalink: "/blog/2011/05/29/hiding-html-using-data-uris-and-base64/index.html"
+excerpt: "I've been spending the past few evenings noodling with the HTML5 <canvas> element. I often bring up the HTML Canvas 2D Context Working Draft specification. The spec shows what functions are available to the canvas'…"
+nid: 57
+nodeType: "story"
+layout: post.njk
+---
+<p>I've been spending the past few evenings noodling with the HTML5 &lt;canvas&gt; element. I often bring up the <a href="http://www.w3.org/TR/2dcontext/">HTML Canvas 2D Context</a> Working Draft specification. The spec shows what functions are available to the canvas' context, and the examples are instructive. However, the spec also introduced me to a method for "hiding" HTML text directly inside another HTML file, using the "data URI" technique.</p>
+
+<p>In the spec, one of the examples shows a very nice graphics hack to display <a href="data:text/html;charset=utf-8;base64,PCFET0NUWVBFIEhUTUw%2BDQo8aHRtbCBsYW5nPSJlbiI%2BDQogPGhlYWQ%2BDQogIDx0aXRsZT5QcmV0dHkgR2xvd2luZyBMaW5lczwvdGl0bGU%2BDQogPC9oZWFkPg0KIDxib2R5Pg0KPGNhbnZhcyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQ1MCI%2BPC9jYW52YXM%2BDQo8c2NyaXB0Pg0KDQogdmFyIGNvbnRleHQgPSBkb2N1bWVudC5nZXRFbGVtZW50c0J5VGFnTmFtZSgnY2FudmFzJylbMF0uZ2V0Q29udGV4dCgnMmQnKTsNCg0KIHZhciBsYXN0WCA9IGNvbnRleHQuY2FudmFzLndpZHRoICogTWF0aC5yYW5kb20oKTsNCiB2YXIgbGFzdFkgPSBjb250ZXh0LmNhbnZhcy5oZWlnaHQgKiBNYXRoLnJhbmRvbSgpOw0KIHZhciBodWUgPSAwOw0KIGZ1bmN0aW9uIGxpbmUoKSB7DQogICBjb250ZXh0LnNhdmUoKTsNCiAgIGNvbnRleHQudHJhbnNsYXRlKGNvbnRleHQuY2FudmFzLndpZHRoLzIsIGNvbnRleHQuY2FudmFzLmhlaWdodC8yKTsNCiAgIGNvbnRleHQuc2NhbGUoMC45LCAwLjkpOw0KICAgY29udGV4dC50cmFuc2xhdGUoLWNvbnRleHQuY2FudmFzLndpZHRoLzIsIC1jb250ZXh0LmNhbnZhcy5oZWlnaHQvMik7DQogICBjb250ZXh0LmJlZ2luUGF0aCgpOw0KICAgY29udGV4dC5saW5lV2lkdGggPSA1ICsgTWF0aC5yYW5kb20oKSAqIDEwOw0KICAgY29udGV4dC5tb3ZlVG8obGFzdFgsIGxhc3RZKTsNCiAgIGxhc3RYID0gY29udGV4dC5jYW52YXMud2lkdGggKiBNYXRoLnJhbmRvbSgpOw0KICAgbGFzdFkgPSBjb250ZXh0LmNhbnZhcy5oZWlnaHQgKiBNYXRoLnJhbmRvbSgpOw0KICAgY29udGV4dC5iZXppZXJDdXJ2ZVRvKGNvbnRleHQuY2FudmFzLndpZHRoICogTWF0aC5yYW5kb20oKSwNCiAgICAgICAgICAgICAgICAgICAgICAgICBjb250ZXh0LmNhbnZhcy5oZWlnaHQgKiBNYXRoLnJhbmRvbSgpLA0KICAgICAgICAgICAgICAgICAgICAgICAgIGNvbnRleHQuY2FudmFzLndpZHRoICogTWF0aC5yYW5kb20oKSwNCiAgICAgICAgICAgICAgICAgICAgICAgICBjb250ZXh0LmNhbnZhcy5oZWlnaHQgKiBNYXRoLnJhbmRvbSgpLA0KICAgICAgICAgICAgICAgICAgICAgICAgIGxhc3RYLCBsYXN0WSk7DQoNCiAgIGh1ZSA9IGh1ZSArIDEwICogTWF0aC5yYW5kb20oKTsNCiAgIGNvbnRleHQuc3Ryb2tlU3R5bGUgPSAnaHNsKCcgKyBodWUgKyAnLCA1MCUsIDUwJSknOw0KICAgY29udGV4dC5zaGFkb3dDb2xvciA9ICd3aGl0ZSc7DQogICBjb250ZXh0LnNoYWRvd0JsdXIgPSAxMDsNCiAgIGNvbnRleHQuc3Ryb2tlKCk7DQogICBjb250ZXh0LnJlc3RvcmUoKTsNCiB9DQogc2V0SW50ZXJ2YWwobGluZSwgNTApOw0KDQogZnVuY3Rpb24gYmxhbmsoKSB7DQogICBjb250ZXh0LmZpbGxTdHlsZSA9ICdyZ2JhKDAsMCwwLDAuMSknOw0KICAgY29udGV4dC5maWxsUmVjdCgwLCAwLCBjb250ZXh0LmNhbnZhcy53aWR0aCwgY29udGV4dC5jYW52YXMuaGVpZ2h0KTsNCiB9DQogc2V0SW50ZXJ2YWwoYmxhbmssIDQwKTsNCg0KPC9zY3JpcHQ%2BDQogPC9ib2R5Pg0KPC9odG1sPg0K" style="" target="_blank">pretty glowing lines</a>. </p>
+<img src="/sites/default/files/u3/prettyglowinglines.png" width="561" height="363" alt="prettyglowinglines.png" />
+<p>The spec does show the example "code" that renders this display. However, if you were to look at the HTML of the <a href="http://www.w3.org/TR/2dcontext/">spec page</a> (or of this page, for example), you'll see a block of code that looks like this:</p>
+<code language="html4strict" linenumbers="off">
+<a href="data:text/html;charset=utf-8;base64,PCFET0NUWVBFIEhUTUw%2BDQo8aHRtbCBs
+YW5nPSJlbiI%2BDQogPGhlYWQ%2BDQogIDx0aXRsZT5QcmV0dHkgR2xvd2luZyBMaW5lczwvd
+Gl0bGU%2BDQogPC9oZWFkPg0KIDxib2R5Pg0KPGNhbnZhcyB3aWR0aD0iODAwIiBoZWlnaHQ
+9IjQ1MCI%2BPC9jY..."</a>
+</code>
+<p>"Whoa," I thought. "Here's a way to mask HTML!"</p>
+<p>Intrigued, I learned that a <a href="http://www.rfc-editor.org/rfc/rfc2397.txt">"data URI"</a> (NOTE: the <a href="http://en.wikipedia.org/wiki/Uniform_Resource_Identifier">URI is the string that the "href" attribute is set to</a>) can express any "resource" <a href="http://www.webmaster-toolkit.com/mime-types.shtml">MimeType</a>. In this case, the MimeType is "text/html;charset=utf8", which means that the data encoded is an HTML page (using the UTF-8 character set). This data URI technique can also be used for embedding small images such as logos. Specifying "base64" says that the resource is encoded in <a href="http://en.wikipedia.org/wiki/Base64">Base64</a>.
+</p>
+<p>Because I knew that the base64 data in the above link was just HTML, I spent a little time trying to find out how to translate it back into HTML. I stumbled on a page that showed me how to do the <a href="http://wvarner.blogspot.com/2008/06/base64-decode-to-file.html">translation of base64 back to English on the UNIX command line</a>. The page offered some one liners in Perl, but the comments yielded the technique I ended up using: the <a href="http://www.moleberry.com/man/base64.1.html">base64 utility command</a>.</p>
+<p>Since I have <a href="http://www.cygwin.com/">Cygwin</a>, I already have this base64 utility. I saved the base64 data into a text file (keeping it all on one line), and ran it as follows:</p>
+<code linenumbers="off">
+base64 -d < base64stuff  > base64stuff.txt
+</code>
+<p>The "-d" switch says to decode the data. I did get hung up with some partially decoded files. After looking at the output of a good encoding, I saw that the base64 data in the "pretty glowing lines" code contained plus signs (<code>+</code>). These were hard to see as they were entity encoded (%2B). However, the broken output suggested a break of some sort. I ended up replacing every "%2B" in the file with the <code>+</code> sign.</p>
+<p>I did think that this base64 data URI would be a great way to "hide" the HTML (at least from non-technical people). However, while writing this post, I saw that the resulting HTML page from the base64 data is already translated! Just view the source of the "pretty glowing lines" demo page, and what you see is regular human-readable HTML. So much for trying to be secretive with data URIs!
+</p>
+<p>It does lead me to ask why they (the <a href="http://www.w3.org/">World Wide Web Consortium</a>) would even use this technique to begin with. The only thing I could come up with was that they wanted to keep the example with the specification. That's a good reason: anytime they send around the HTML of the spec, they send along the examples as well. Convenient!</p>

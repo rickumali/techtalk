@@ -1,0 +1,17 @@
+---
+title: "Don't Underestimate Hello World"
+date: 2009-01-16
+tags: ["objective-c"]
+permalink: "/blog/2009/01/16/dont-underestimate-hello-world/index.html"
+excerpt: "Kernighan and Ritchie made things look so easy with their innocent \"Hello, World\" program . Yes, it's just a few lines, and the command to invoke the compiler is so easy (\"cc hello.c\"). But don't go underestimating…"
+nid: 31
+nodeType: "story"
+layout: post.njk
+---
+<p><a href="http://en.wikipedia.org/wiki/K&R">Kernighan and Ritchie</a> made things look so easy with their innocent <a href="http://en.wikipedia.org/wiki/Hello_world_program">"Hello, World" program</a>. Yes, it's just a few lines, and the command to invoke the compiler is so easy ("cc hello.c"). But don't go underestimating "Hello, World."</p>
+
+<p>While playing with some of nifty applications I downloaded for my <a href="http://www.flickr.com/photos/rickumali/3168676429/">iPod touch</a>, I thought about maybe writing my own application. I visited <a href="http://www.stackoverflow.com/">Stack Overflow</a>, where I learned that <a href="http://stackoverflow.com/questions/370385/how-to-develop-iphone-applications-on-a-windows-pc-closed">developing for the iPod without a Mac is pretty much a non-starter.</a> But I also learned that most iPod/Mac development is in <a href="http://burks.brighton.ac.uk/burks/language/objc/objcfaq.htm">Objective C</a>, so I figured I could at least learn some Objective C while saving money for <a href="http://en.wikipedia.org/wiki/Mac_Mini">a Mac mini</a>.</p>
+<p>I found some <a href="http://burks.brighton.ac.uk/burks/language/objc/dekorte/5_sample/sampl001.htm">sample code</a> that looked interesting, so I went about trying try to compile it, to see it run.</p>
+<img src="/sites/default/files/hw.jpg" alt="Compiling an Objective C Program in MinGW">
+<p>It was while struggling with my compiler and my <a href="http://en.wikipedia.org/wiki/Make_(software)">Makefile</a> that I thought about how hard it is to get "Hello, World" to work sometimes. In K&R, they hand-wave the details with this sentence: "Just how to run this program depends on the system that you are using." "Hello, World" may be a "basic hurdle", but <i>it is a hurdle</i>. And it's a hurdle every programmer has to get past.</p>
+<p>(On my system, a laptop running Windows XP, I just happened to have <a href="http://www.mingw.org/">MinGW</a> (Minimalist GNU for Windows) installed. The MinGW software includes (if you install it) an Objective C compiler. Once I familiarized myself with the switches, it was just a matter of typing in some code (or in my case, copying and pasting the code) into some source files, and typing make (or in my case, typing "mingw32-make").)</p>

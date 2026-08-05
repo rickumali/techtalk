@@ -1,0 +1,23 @@
+---
+title: "Printing Line N"
+date: 2009-03-15
+tags: ["unix"]
+permalink: "/blog/2009/03/15/printing-line-n/index.html"
+excerpt: "If you're in front of UNIX system, you should have access to sed , the UNIX \"stream editor\", which has a lot of utility to it. Here's a little idiom that comes in handy every now and then."
+nid: 37
+nodeType: "story"
+layout: post.njk
+---
+<p>If you're in front of UNIX system, you should have access to <a href="http://www.gnu.org/software/sed/manual/sed.html">sed</a>, the UNIX "stream editor", which has a lot of utility to it. Here's a little idiom that comes in handy every now and then.</p>
+<pre>
+% sed -n '16p' file.txt
+Not bad for 1/2 hour worth of work!
+</pre>
+<p>The string '16p' says "print line 16". So to print any particular line out of a file, use sed -n 'Np' file.txt, where N is the line that you want. And if you want a range of lines, use 'M,Np', where M and N are the starting and ending line numbers in question.</p>
+<pre>
+% sed -n '16,18p' 20090308.txt
+Not bad for 1/2 hour worth of work!
+
+ Directory of C:\Documents and Settings\Rick\My Documents\Notes
+</pre>
+

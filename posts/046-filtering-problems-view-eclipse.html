@@ -1,0 +1,31 @@
+---
+title: "Filtering the Problems View in Eclipse"
+date: 2010-01-30
+tags: ["eclipse", "java"]
+permalink: "/blog/2010/01/30/filtering-problems-view-eclipse/index.html"
+excerpt: "In the world of Java development, you're bound to throw some projects into Eclipse that fill up the Problems View with so many issues that this view becomes unusable. That happened to me, and it quickly reduced my…"
+nid: 46
+nodeType: "story"
+layout: post.njk
+---
+<p>In the world of Java development, you're bound to throw some projects into <a href="http://eclipse.org/">Eclipse</a> that fill up the Problems View with so many issues that this view becomes unusable. That happened to me, and it quickly reduced my productivity. This view lets you find compilation and build issues that require fixing. The team leader on my project said "you've got a lot of errors there; let's filter them." He showed me how, and I was amazed. Apparently, this great and obvious piece of functionality was available, seemingly right under my nose!</p>
+
+<p><img alt="The Problems View in RAD (Eclipse)" src="/sites/default/files/problems-all.jpg"></p>
+
+<p>In IBM's Eclipse, known as <a href="http://www.ibm.com/software/awdtools/developer/application/">RAD</a> (I use Version 7), the Problems View can be filtered by selecting the problem filter icon. This is an icon that almost begs to be clicked on, but in my months on this project, I've never touched it.</p>
+
+<p><img alt="The Problem Filter Icon in Eclipse" src="/sites/default/files/problem-filter-button.jpg"></p>
+
+<p>Clicking on this icon brings up the "Filters" dialog window, which allows you to "filter" the problems in every which way.</p>
+
+<p><img alt="The Filters Dialog in RAD (Eclipse)" src="/sites/default/files/problem-filter.jpg"></p>
+
+<p>For my day-to-day use, it was enough to select "On selected element and its children" (instead of the default "On any element"). This means that the problems in the Problems View will only be for the selected project or package or class. It reduces the number of errors and warnings to something much more manageable and it's an extremely helpful adjustment.</p>
+
+<p>To get to this dialog in the freely available, non-commercial Eclipse (outside of my current project, I use Ganymede), click on the Problems tab, then the down-arrow (the View Menu), and select "Configure Contents..."</p> 
+
+<p><img alt="Configure Contents (in Eclipse)" src="/sites/default/files/problem-configure.jpg"></p>
+
+<p>The dialog suggests other ways to filter errors and warnings, and I'm sure I'll refine this technique over time, but the key was knowing there was a way to filter the Problems View in the first place.</p>
+
+<p>This reminds me of how important it is to be constantly curious about your tools, and the proper way to use them. In the case of software development tools, there can be tons of functionality hidden "in plain view." I recommend clicking on these strange icons, talking to colleagues about how they use their tools, <a href="http://stackoverflow.com/questions/156745/best-practices-for-eclipses-problems-view">reading forums</a>, and rereading <a href="http://help.eclipse.org/help32/index.jsp?topic=/org.eclipse.platform.doc.user/concepts/cprbview.htm"documentation</a>. This all pays off with increased productivity!</p>

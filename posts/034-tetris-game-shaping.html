@@ -1,0 +1,15 @@
+---
+title: "Tetris Game Shaping Up"
+date: 2009-02-09
+tags: ["tetris", "c++"]
+permalink: "/blog/2009/02/09/tetris-game-shaping/index.html"
+excerpt: "Tonight, I reached a good point with my coding of Tetris: I managed to get falling pieces that I could move horizontally. Some big things are missing: boundary detection, the creation of the \"mound\" (the pieces that…"
+nid: 34
+nodeType: "story"
+layout: post.njk
+---
+<p>Tonight, I reached a good point with my coding of Tetris: I managed to get falling pieces that I could move horizontally. Some big things are missing: boundary detection, the creation of the "mound" (the pieces that collect at the bottom of the playing field), and the randomization of the pieces themselves.</p>
+<img src="/sites/default/files/tetris01.jpg" alt="My testsdlshape Program for Tetris Shapes">
+<p>One of the things I have learned in <a href="http://www.linkedin.com/in/rickumali">my day job</a> is the importance of good <a href="http://it.toolbox.com/blogs/effective-crm/crm-requirements-gathering-ltgt-crm-strategy-26762">requirements</a>. Simply put, requirements tell me what to build. It's not a blue print, but more of a list of needs and wants. Some Examples: The system needs to accept XML. The system's screen should be light green.</p>
+<p>When I started this, I thought I could code up this game from scratch. Instead, something as simple "what colors should I use for each shape" kept nagging at me. For my "requirements", I cast about the Internet and happily found <a href="http://www.tetrisconcept.com/wiki/index.php/Main_Page">Tetris Concept</a>, a Wiki and a Forum for all lovers of Tetris. On this site, I've found not only the colors of the shapes, but the conventional names of the shapes. These details, along with many others, constitute the "requirements" for my version of the game.</p>
+<p>Of course, having a good "reference implementation" helps. I've been relying on the Tetris that I downloaded for <a href="http://www.flickr.com/photos/rickumali/3168676429/">my iPod</a>. I also found a very nice Tetris clone on <a href="http://code.google.com/p/simple-tetris-clone/">Google Code</a>. I've enjoyed playing this version, but I've so far refrained from looking at how the author (<a href="http://code.google.com/u/exeQtor/">exeQtor</a>) implemented his game. As he puts it: "The good thing about Tetris is that it has a very well known gameplay mechanic and it is relatively simple to program but challenging enough for not being trivial." Precisely why I'm doing this!</p>

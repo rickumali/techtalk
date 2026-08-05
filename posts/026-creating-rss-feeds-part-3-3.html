@@ -1,0 +1,65 @@
+---
+title: "Creating RSS Feeds (Part 3 of 3)"
+date: 2008-12-20
+tags: ["perl", "code", "rss"]
+permalink: "/blog/2008/12/20/creating-rss-feeds-part-3-3/index.html"
+excerpt: "In the previous post , I showed how WWW::Mechanize and HTML::TokeParser can grab content from a website, and parse that content to produce the information required for an RSS feed. So how do I make a feed with all that?"
+nid: 26
+nodeType: "story"
+layout: post.njk
+---
+<p>In the <a href="/blog/2008/12/14/creating-rss-feeds-part-2-3">previous post</a>, I showed how <a href="http://search.cpan.org/~petdance/WWW-Mechanize-1.52/lib/WWW/Mechanize.pm">WWW::Mechanize</a> and <a    href="http://search.cpan.org/~gaas/HTML-Parser-3.59/lib/HTML/TokeParser.pm">HTML::TokeParser</a> can grab content from a website, and parse that content to produce the information required for an RSS feed. So how do I make a  feed with all that?</p>
+
+<p>Well, what I don't do is reinvent the wheel. I found a perfectly reasonable Perl module called <a href="http://search.cpan.org/~shlomif/XML-RSS-1.41/lib/XML/RSS.pm">XML::RSS</a> that produces RSS feeds. But before we look at that module, let's take a look at the information produced from the previous two posts. Here's the code from before:</p>
+<code lang="perl">
+      while (my $div_tag = $stream->get_tag("div")) {
+              if ($div_tag->[1]{class} && $div_tag->[1]{class} eq "MBEntry") {
+                      my $id = $div_tag->[1]{id};
+                      $subject{$id} = get_subject($stream);
+                      $pubDate{$id} = get_pubdate($stream);
+                      $text{$id} = get_entry($stream);
+              }
+      }
+</code>
+<p>At the finish of this loop, this is what's in the subject and pubDate Perl hashes:</p>
+<code lang="perl" linenumbers="off">
+  DB<4> x \%subject
+0  HASH(0x1217ef120)
+   'entry_175686' => 'Bruins Win on Montreal Ice'
+   'entry_176300' => 'Bruins Looking Good'
+   'entry_176899' => 'S.L. Price on Paul Pierce'
+   'entry_177491' => 'The Hip Diana Taurasi'
+   'entry_178076' => 'Calling the Shots'
+
+  DB<5> x \%pubDate
+0  HASH(0x1217f02e8)
+   'entry_175686' => 'Sun, 23 Nov 2008 09:47:00 EDT'
+   'entry_176300' => 'Sat, 29 Nov 2008 21:37:00 EDT'
+   'entry_176899' => 'Fri, 05 Dec 2008 21:53:00 EDT'
+   'entry_177491' => 'Thu, 11 Dec 2008 22:12:00 EDT'
+   'entry_178076' => 'Thu, 18 Dec 2008 23:34:00 EDT'
+</code>
+<p>I've omitted the text hash from this listing. Take careful note that the keys are unique to each BLOG post. From the listing, you can see that "Bruins Looking Good" (line 4) corresponds to BLOG post entry_176300, and it was published Saturday, November 29 (line 12).</p>
+<p>(<a href="http://perlmonks.org/">Perl monks</a> will recognize that this output is from the <a href="http://debugger.perl.org/580/perldebug.html">Perl Debugger</a>. I remember when I first stepped through Perl code in this debugger; my first thought: "Now I can't be stopped!")</p>
+<p>The code to pass this information to XML::RSS is straightforward. Here's an excerpt:</p>
+<code lang="perl">
+my $rss = new XML::RSS (version => '2.0');
+$rss->channel(title          => 'Rick on Sports',
+          link           => 'http://www.sportingnews.com/blog/rickumali',
+              # More code omitted
+          );
+foreach my $id (sort {$b cmp $a} keys %subject) {
+    my $display_id = $id;
+    $display_id =~ s/entry_//;
+    my $truncated_text = truncate_text($text{$id},160);
+    $rss->add_item(title => $subject{$id},
+           link  => "http://www.sportingnews.com/blog/rickumali/$display_id",
+           pubDate  => $pubDate{$id},
+           permaLink  => "http://www.sportingnews.com/blog/rickumali/$display_id",
+           description => $truncated_text,
+          );
+}
+</code>
+<p>Line 6 is the <a href="http://www.perlmonks.org/?node_id=128722">Perl idiom for producing a descending sort</a>. Line 7 is me removing the "entry_" prefix from the BLOG ID. Line 9 produces truncated text, so the full text of the BLOG isn't in the feed (thus driving subscribers to the site; all three of them). The feed can be seen at <a href="http://feeds.feedburner.com/RickOnSports">Feedburner</a>.</p>
+<p>I welcome you to download the code, and try to make sense of it yourself. If you decide to use it for some website you know, you may find yourself editing the code to fit your needs. Go for it. And someday soon on this blog I'll talk about the time I wrecked havoc at <a href="http://www.netatlantic.com/">my hosting company</a> with the code in line 9.</p>
+<p><i>The full source code is at <a href="http://rgu.freeshell.org/feedsn.txt">feedsn.pl</a>.</i></p>

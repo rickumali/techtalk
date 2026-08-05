@@ -1,0 +1,65 @@
+---
+title: "Printing PATHs Nicely (with Perl)"
+date: 2009-11-29
+tags: ["perl"]
+permalink: "/blog/2009/11/29/printing-paths-nicely-perl/index.html"
+excerpt: "I spend a lot of time in the DOS Command Window. And I spend a lot of time being curious about my Windows PATH. Examining the directories in your PATH can be a demoralizing exercise, but a Perl one-liner makes reading…"
+nid: 45
+nodeType: "story"
+layout: post.njk
+---
+<p>I spend a lot of time in the DOS Command Window. And I spend a lot of time being curious about my Windows PATH. Examining the directories in your PATH can be a demoralizing exercise, but a Perl one-liner makes reading it very manageable.</p>
+
+Here's the output of PATH on my work laptop:</p>
+<code linenumbers="off">
+C:\>path
+PATH=c:\php-5.2.9-1;c:\apache-ant-1.7.1\bin;C:\Program Files\Windows Resource Ki
+ts\Tools\;c:\pstools;c:\Program Files\GnuWin32\bin;C:\WINDOWS\system32;C:\WINDOW
+S;C:\Program Files\TortoiseSVN\bin;C:\Program Files\SlikSvn\bin\;C:\Endeca\MDEXE
+ngine\5.1.4\perl;C:\Endeca\MDEXEngine\5.1.4\perl\5.8.3\bin;C:\Endeca\MDEXEngine\
+5.1.4\lib\com;C:\Endeca\MDEXEngine\5.1.4\bin;C:\Endeca\MDEXEngine\5.1.4\utilitie
+s;C:\Program Files\MySQL\MySQL Server 5.1\bin;c:\apache-maven-2.0.9\bin
+</code>
+<p>Quick: how many directories are there? That's right...unless you can quickly count the semi-colons, it's hard. It's even harder to look at the PATHs to pick out the individual directories.</p>
+<p>Now here's the one-liner, which you can type directly into your DOS window (provided Perl is in your PATH):</p>
+<code linenumbers="off">
+echo %PATH%|perl -nl -0x3b -e "print ++$i, ' ', $_;"
+</code>
+<p>When I enter this on my laptop, I get this clean, legible output:</p>
+<code linenumbers="off">
+C:\>echo %PATH%|perl -nl -0x3b -e "print ++$i, ' ', $_;"
+1 c:\php-5.2.9-1
+2 c:\apache-ant-1.7.1\bin
+3 C:\Program Files\Windows Resource Kits\Tools\
+4 c:\pstools
+5 c:\Program Files\GnuWin32\bin
+6 C:\WINDOWS\system32
+7 C:\WINDOWS
+8 C:\Program Files\TortoiseSVN\bin
+9 C:\Program Files\SlikSvn\bin\
+10 C:\Endeca\MDEXEngine\5.1.4\perl
+11 C:\Endeca\MDEXEngine\5.1.4\perl\5.8.3\bin
+12 C:\Endeca\MDEXEngine\5.1.4\lib\com
+13 C:\Endeca\MDEXEngine\5.1.4\bin
+14 C:\Endeca\MDEXEngine\5.1.4\utilities
+15 C:\Program Files\MySQL\MySQL Server 5.1\bin
+16 c:\apache-maven-2.0.9\bin
+</code>
+<p>
+So how does this work? The key to this one-liner is <a href="http://perldoc.perl.org/perlrun.html#*-0*[_octal/hexadecimal_]">Perl's 0 (zero) switch</a>. The -0 tells Perl what it should use for its input record separator (this is an <a href="http://people.cs.uu.nl/piet/docs/nawk/nawk_19.html">AWK concept</a>). 0x3B is the hexadecimal value of the ";" (semi-colon). When -0x3B is used with the -n and -l switches (-n for "automatic looping", and -l for "automatic line-ending processing"), it basically says "loop through this string, treating every string that ends with a semi-colon as a single record." The print command passed to the -e switch (-e for "run the following argument as a one line program") auto-increments the line number.
+</p>
+<p>
+Coming up with one-liners in Perl rely on understanding Perl's rich command line switches, two of which (-n and -p) cause a while loop to be created out of thin air, and another two (-a with -F and -0) cause the input "records" to be manipulated before being passed to a program (via -e).
+</p>
+<p>To run this program on UNIX, you'll have to replace the input record separator with colon (0x3A):</p>
+<code linenumbers="off">
+% printenv PATH|perl -nl -0x3A -e 'print ++$i, " ", $_;'
+1 /usr/pkg/bin
+2 /usr/bin
+3 /bin
+4 /usr/pkg/games
+5 /usr/pkg/X11R6/bin
+6 /sys/sdf/bin
+7 /arpa/ns/r/rgu/nanoblogger-3.3-rc3
+8 /usr/pkg/java/jdk-1.1.8/bin
+</code>

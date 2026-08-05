@@ -1,0 +1,81 @@
+---
+title: "Debugging Tagadelic Tags in Drupal"
+date: 2010-05-22
+tags: ["drupal", "php"]
+permalink: "/blog/2010/05/22/debugging-tagadelic-tags-drupal/index.html"
+excerpt: "I added a tag cloud to this BLOG. It looks quite nice, and I was happy with the tags except when I saw that that they didn't accurately reflect my content."
+nid: 48
+nodeType: "story"
+layout: post.njk
+---
+<p>I added a tag cloud to this BLOG. It looks quite nice, and I was happy with the tags except when I saw that that they didn't accurately reflect my content.</p>
+
+<p>When I first deployed this change, the biggest tag was for "drupal", but when you clicked on that tag, you saw only one story. And conversely, the "c++" tag is smaller than the "drupal" tag, but there are three "c++" stories. Why was the "drupal" tag so large? And why was the "c++" tag so small?</p>
+
+<img src="/sites/default/files/tagadelic-bad.jpg" alt="Screen shot of the incorrect tags">
+
+<p>It took only a little bit of investigation to realize that the "drupal" tag was so large because my <a href="http://drupal.org/">Drupal</a> tag module <a href="http://drupal.org/project/tagadelic">Tagadelic</a> counted my <i>unpublished</i> stories which I had tagged with "drupal". During the "development" of this site, I tagged all my "fake" content as "drupal", and when I finally "launched", I unpublished all that content. However, the content was still in the database, and Tagadelic was counting it. </p>
+
+<p>So how was Tagadelic counting these unpublished tags? For this, I had to look inside the module's PHP code, tagadelic.module. I'm not a <a href="http://drupal.org/">Drupal</a> module expert, but I knew I was looking for SQL, and eventually I found it. In the function tagadelic_get_weighted_tags(), I saw this:</p>
+
+<code language="php" linenumbers="off">
+    $result = db_query_range('SELECT COUNT(*) AS count, d.tid, d.name, d.vid FROM {term_data} d INNER JOIN {term_node} n ON d.tid = n.tid WHERE d.vid IN ('. substr(str_repeat('%d,', count($vids)), 0, -1) .') GROUP BY d.tid, d.name, d.vid ORDER BY count DESC', $vids, 0, $size);
+</code>
+
+<p>After looking at Drupal's term_node and term_data tables, and taking some guesses at the value of "vid" (mine was '2'), I ran the query against my Drupal's <a href="http://mysql.com/">MySQL</a> database (using <a href="http://www.phpmyadmin.net/home_page/index.php">phpMyAdmin</a>). This produced the output:</p>
+
+<code linenumbers="off">
+count   t.id    d.name
+9 	4 	drupal
+7 	2 	perl 
+5 	23 	job 
+4 	11 	code 
+4 	3 	source 
+3 	8 	bio 
+</code>
+
+<p>The "drupal" tag was the count leader (9), hence the large tag. However, the count contained unpublished stories. How do tell the query to count "only published stories"? Examining Drupal's "node" table revealed the status flag, which (by inspection) is set to '1' when a story is published.</p>
+
+<img src="/sites/default/files/tagadelic-nodes.jpg" alt="Screen shot of the node table">
+
+<p>I now needed to add this condition to the SQL's WHERE clause. My first pass was this SQL:</p>
+
+<code lang="sql" linenumbers="off">
+SELECT COUNT(*) AS count, d.tid, d.name, d.vid 
+FROM term_data d INNER JOIN term_node n 
+ON d.tid = n.tid 
+WHERE d.vid IN ('2')
+AND n.nid in (select n.nid from node n where status=1)
+GROUP BY d.tid, d.name, d.vid ORDER BY count DESC
+</code>
+
+<p>This produced a better looking set of weighted tags:</p>
+
+<img src="/sites/default/files/tagadelic-goodquery.jpg" alt="Screen shot of the corrected query">
+
+<p>After making a backup of tagadelic.module, and then carefully replacing the SQL in the db_query_range() method, I refreshed my BLOG's home page. The change didn't do anything. Stymied, I looked at the tagadelic_get_weighted_tags() method, and I saw these lines:</p>
+
+<code lang="php" linenumbers="off">
+  // Check if the cache exists
+  $cache_name = 'tagadelic_cache_'. $options;
+  $cache = cache_get($cache_name);
+
+  // make sure cache has data
+  if (isset($cache->data)) {
+    $tags = $cache->data;
+  }
+</code>
+
+<p>Clearly the tagadelic results were being cached, and perusing the Drupal tables lead me to the "cache" table (apparently used by the <a href="http://api.drupal.org/api/function/cache_get/6">cache_get()</a> function).</p>
+
+<img src="/sites/default/files/tagadelic-cache.jpg" alt="Screen shot of the cache table">
+
+<p>To reset things, I just deleted the rows associated with tagadelic. On a "real" site, this would be done during a scheduled outage, or perhaps tested on a staging environment. This site? I deleted the rows almost as soon as I realized it was the right thing to do. (However, this didn't persist the change, and I ended up using the "Clear cached data" function in the "Admin &gt; Site configuration" page.) Once I did that, a refresh of the BLOG's home page showed the corrected sizes!</p>
+
+<img src="/sites/default/files/tagadelic-fixed.jpg" alt="Screen shot of the corrected tags">
+
+<p>Feeling all smug and confident, I visited <a href="http://drupal.org/project/tagadelic">Tagadelic's module page</a>. I went to the "issues" page, planning to file a bug. Of course, after scanning the headlines, I saw that <a href="http://drupal.org/node/411852">this issue was already reported and resolved</a> (though not yet delivered in released code).</p>
+
+<p>The query in the issues page (by <a href="http://drupal.org/user/27257">chrislb</a>) was more thought out than mine (it didn't use a sub-select statement, but rather <a href="http://www.4guysfromrolla.com/webtech/050599-1.shtml">a multiple join</a>). I replaced my query with chrislb's, and the end result was the same: good looking and <i>correct</i> tags!</p>
+
+<p>Did I learn any lessons from this? Yes: Peruse your Drupal's module's issues page before embarking on any technical investigations (though it was fun to be inside some PHP code).</p>

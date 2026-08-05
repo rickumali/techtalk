@@ -1,0 +1,115 @@
+---
+title: "Making Wireless Work on a Dell D600 with Ubuntu"
+date: 2012-02-05
+tags: ["hardware", "b43-fwcutter", "ubuntu"]
+permalink: "/blog/2012/02/04/making-wireless-work-dell-d600-ubuntu/index.html"
+excerpt: "I recently inherited an old Dell Latitude D600 laptop, but the wireless wasn't working on it. After some investigation, I learned that it somehow didn't have a wireless card! Digging around document.write(' on eBay, I…"
+nid: 63
+nodeType: "story"
+layout: post.njk
+---
+<p>
+I recently inherited an old Dell Latitude D600 laptop, but the wireless wasn't working on it. After some investigation, I learned that it somehow didn't have a wireless card! Digging around 
+<script>document.write('<a target="_blank" href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=9&pub=5574951855&toolid=10001&campid=5337041001&customid=&icep_uq=dell+wireless+1370+mini+pci&icep_sellerId=&icep_ex_kw=&icep_sortBy=12&icep_catId=&icep_minPrice=&icep_maxPrice=&ipn=psmain&icep_vectorid=229466&kwid=902099&mtid=824&kw=lg">on eBay, I found a Dell Wireless 1370 Mini PCI card</a><img style="text-decoration:none;border:0;padding:0;margin:0;" src="http://rover.ebay.com/roverimp/1/711-53200-19255-0/1?ff3=9&pub=5574951855&toolid=10001&campid=5337041001&customid=&uq=dell+wireless+1370+mini+pci&mpt='+Math.floor(Math.random()*999999999)+'">');</script><noscript><a target="_blank" href="http://rover.ebay.com/rover/1/711-53200-19255-0/1?icep_ff3=9&pub=5574951855&toolid=10001&campid=5337041001&customid=&icep_uq=dell+wireless+1370+mini+pci&icep_sellerId=&icep_ex_kw=&icep_sortBy=12&icep_catId=&icep_minPrice=&icep_maxPrice=&ipn=psmain&icep_vectorid=229466&kwid=902099&mtid=824&kw=lg">on eBay, I found a Dell Wireless 1370 Mini PCI card</a><img style="text-decoration:none;border:0;padding:0;margin:0;" src="http://rover.ebay.com/roverimp/1/711-53200-19255-0/1?ff3=9&pub=5574951855&toolid=10001&campid=5337041001&customid=&uq=dell+wireless+1370+mini+pci&mpt=[CACHEBUSTER]"></noscript>
+ for my D600 ($14.00). When it arrived, I carefully <a href="http://support.dell.com/support/edocs/systems/latd600/sm/upgrades.htm#1019173">installed it into the Mini PCI bay</a> (pictured below).
+</p>
+<p>
+<img src="/sites/default/files/u3/mini-pci-bay.jpg" alt="Picture of Wireless Mini PCI Card in Dell Mini PCI Bay"/>
+</p>
+<p>
+Since the computer is fairly old (over five years old), I wanted to wipe Windows XP off of it, and run some kind of Linux. I chose Ubuntu because I enjoy using the <a href="http://drupal.org/project/quickstart">Drupal Quickstart</a> project, which is an Ubuntu virtual machine. I <a href="http://www.ubuntu.com/download/ubuntu/download">burned an Ubuntu "live" CD</a>, and booted into Ubuntu's Unity.
+</p>
+<p>
+The fun started when I realized that support for the wireless Mini PCI card wasn't a standard part of Ubuntu. I saw the "device not ready (firmware missing)" message. 
+</p>
+<img src="/sites/default/files/u3/wireless-notworking.png" alt="Picture of Wireless Firmware Not Available on Ubuntu"/>
+<p>
+I quickly found <a href="https://help.ubuntu.com/community/WifiDocs/Driver/bcm43xx">Ubuntu's community page on wifi drivers</a>, and after identifying my card via <a href="http://en.wikipedia.org/wiki/Lspci">lspci</a>, I followed the section for the b43 driver. (For all of these steps, I was connected to my router via an Ethernet cable.)
+</p>
+<p>
+I thought I was following the right steps, but the wireless continued to not work. After reading the page over (and over again) I realized I was skipping an important step. In the section <a href="https://help.ubuntu.com/community/WifiDocs/Driver/bcm43xx#Installing_b43_drivers">"Installing b43 drivers"</a>, I was guided to install the b43-fwcutter and firmware-b43-installer. I was never able to find the firmware-b43-installer (I kept getting the "Unable to locate package firmware-b43-installer" error from <a href="https://help.ubuntu.com/community/AptGet/Howto">apt</a>), but the b43-fwcutter was successfully installed. I thought I was stuck, but it turned out that I <b>still needed to download the firmware</b>!
+</p>
+<p>
+This step is described in the <a href="https://help.ubuntu.com/community/WifiDocs/Driver/bcm43xx#b43_-_No_Internet_access">"b43 - No Internet access"</a> section. Because I had Internet access, I thought I didn't need to follow this section, but I did. Reading the <a href="http://linuxwireless.org/en/users/Drivers/b43">Linux Wireless b43 page</a> (which I got from the <a href="http://bcm43xx.berlios.de/">Broadcom 43xx Linux Driver page</a>) made me realize that I had to <b>run the b43-fwcutter program</b>. In the "No Internet access" section, I was guided to grab two files (comprising the firmware): <a href="http://downloads.openwrt.org/sources/wl_apsta-3.130.20.0.o">wl_apsta.o</a> and <a href="http://mirror2.openwrt.org/sources/broadcom-wl-4.150.10.5.tar.bz2">wl_apsta_mimo.o</a>. (The last file is inside a compressed tar file.) I then followed these instructions to run b43-fwcutter:
+</p>
+<p>
+<code linenumbers="off">
+$ sudo b43-fwcutter -w /lib/firmware wl_apsta-3.130.20.0.o
+$ sudo b43-fwcutter --unsupported -w /lib/firmware broadcom-wl-4.150.10.5/driver/wl_apsta_mimo.o
+</code>
+</p>
+<p>
+The output of the above two commands was this:
+</p>
+<p>
+<code linenumbers="off">
+$ sudo b43-fwcutter -w /lib/firmware wl_apsta-3.130.20.0.o
+This file is recognised as:
+  ID         :  FW10
+  filename   :  wl_apsta.o
+  version    :  295.14
+  MD5        :  e08665c5c5b66beb9c3b2dd54aa80cb3
+Extracting b43legacy/ucode2.fw
+Extracting b43legacy/ucode4.fw
+Extracting b43legacy/ucode5.fw
+Extracting b43legacy/ucode11.fw
+Extracting b43legacy/pcm4.fw
+Extracting b43legacy/pcm5.fw
+Extracting b43legacy/a0g0bsinitvals2.fw
+Extracting b43legacy/b0g0bsinitvals5.fw
+Extracting b43legacy/a0g0initvals5.fw
+Extracting b43legacy/a0g1bsinitvals5.fw
+Extracting b43legacy/a0g0initvals2.fw
+Extracting b43legacy/a0g1initvals5.fw
+Extracting b43legacy/b0g0bsinitvals2.fw
+Extracting b43legacy/b0g0initvals5.fw
+Extracting b43legacy/b0g0initvals2.fw
+Extracting b43legacy/a0g0bsinitvals5.fw
+
+$ sudo b43-fwcutter --unsupported -w /lib/firmware broadcom-wl-4.150.10.5/driver/wl_apsta_mimo.o
+This file is recognised as:
+  ID         :  FW13
+  filename   :  wl_apsta_mimo.o
+  version    :  410.2160
+  MD5        :  cb8d70972b885b1f8883b943c0261a3c
+Extracting b43/pcm5.fw
+Extracting b43/ucode15.fw
+Extracting b43/ucode14.fw
+Extracting b43/ucode13.fw
+Extracting b43/ucode11.fw
+Extracting b43/ucode9.fw
+Extracting b43/ucode5.fw
+Extracting b43/lp0bsinitvals15.fw
+Extracting b43/lp0initvals15.fw
+Extracting b43/lp0bsinitvals14.fw
+Extracting b43/lp0initvals14.fw
+Extracting b43/a0g1bsinitvals13.fw
+Extracting b43/a0g1initvals13.fw
+Extracting b43/b0g0bsinitvals13.fw
+Extracting b43/b0g0initvals13.fw
+Extracting b43/lp0bsinitvals13.fw
+Extracting b43/lp0initvals13.fw
+Extracting b43/n0absinitvals11.fw
+Extracting b43/n0bsinitvals11.fw
+Extracting b43/n0initvals11.fw
+Extracting b43/a0g1bsinitvals9.fw
+Extracting b43/a0g0bsinitvals9.fw
+Extracting b43/a0g1initvals9.fw
+Extracting b43/a0g0initvals9.fw
+Extracting b43/b0g0bsinitvals9.fw
+Extracting b43/b0g0initvals9.fw
+Extracting b43/a0g1bsinitvals5.fw
+Extracting b43/a0g0bsinitvals5.fw
+Extracting b43/a0g1initvals5.fw
+Extracting b43/a0g0initvals5.fw
+Extracting b43/b0g0bsinitvals5.fw
+Extracting b43/b0g0initvals5.fw
+</code>
+</p>
+<p>
+The above was the key. The bw43-fwcutter is a "firmware cutter", a tool to extract firmware from Broadcom 43xx driver files (object files). Once I downloaded the driver files, and extracted the firmware via b43-fwcutter, I executed the modprobe b43 commands on the <a href="https://help.ubuntu.com/community/WifiDocs/Driver/bcm43xx">Ubuntu WifiDocs page</a>, and that made it work!
+</p>
+<img src="/sites/default/files/u3/wireless-working.png" alt="Picture of D600 Wireless Working on Ubuntu">
+<p>
+<b>Post Script:</b> All of the above was done with the "live" CD. When I installed Ubuntu 11.10 on the laptop's hard drive (wiping Windows XP), the <a href="https://help.ubuntu.com/community/AptGet/Howto">apt</a> was not able to find and install the b43-fwcutter. I had to <a href="https://launchpad.net/ubuntu/oneiric/i386/b43-fwcutter/1:014-9">download the b43-fwcutter package manually (from launchpad.net)</a>. Double-clicking on the package caused the Ubuntu Software Center to install the b43-fwcutter, and from there I followed the steps from before.
+</p>

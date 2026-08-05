@@ -1,0 +1,55 @@
+---
+title: "Creating RSS Feeds (Part 2 of 3)"
+date: 2008-12-14
+tags: ["perl", "code", "firebug"]
+permalink: "/blog/2008/12/14/creating-rss-feeds-part-2-3/index.html"
+excerpt: "In the previous part, I showed the main loop to grab the \"interesting bits\" from the HTML of my Sporting News' BLOG. Let me dig into this a little more. On the BLOG, a typical entry looks like this:"
+nid: 25
+nodeType: "story"
+layout: post.njk
+---
+<p>In the previous part, I showed the main loop to grab the "interesting bits" from the HTML of  my Sporting News' BLOG. Let me dig into this a little more.
+
+On the BLOG, a typical entry looks like this:</p>
+<p><img src="/sites/default/files/crf01.jpg" alt="Picture of BLOG entry"></p>
+<p>Using <a href="http://getfirebug.com/">Firebug</a> ("<a href="http://support.microsoft.com/kb/176222">View Source</a>" is so 1990s), I can see the id and class attributes of the div elements. The div that identifies each BLOG entry is class="MBEntry".</p>
+ <p><img src="/sites/default/files/crf02.jpg" alt="BLOG entry HTML source (under Firebug)"></p>
+Knowing all this allows me to write this Perl:
+<p>
+<code lang="perl">
+while (my $div_tag = $stream->get_tag("div")) {
+        if ($div_tag->[1]{class} && $div_tag->[1]{class} eq "MBEntry") {
+                my $id = $div_tag->[1]{id};
+                $subject{$id} = get_subject($stream);
+                $pubDate{$id} = get_pubdate($stream);
+                $text{$id} = get_entry($stream);
+        }
+}
+</code>
+</p>
+<p>In line 1, the <a href="http://search.cpan.org/~gaas/HTML-Parser-3.59/lib/HTML/TokeParser.pm">HTML::TokeParser's</a> get_tag() method returns an HTML "tag", complete with attributes. This return value is stored in a <a href="http://www.perlmeme.org/howtos/using_perl/dereferencing.html">Perl array reference</a>, which contains one of these arrays, depending on whether we're looking for a start or an end tag:</p>
+<p>
+<code lang="perl" linenumbers="off">
+      [$tag, $attr, $attrseq, $text] // Start tag
+      ["/$tag", $text] // End tag
+</code>
+</p>
+<p>Since we're looking for a start tag, this means that $div_tag->[1] returns the $attr element. The $attr element is a <a href="http://www.perl.com/doc/manual/html/pod/perlref.html">Perl hash reference</a>, which contains the <a href="http://www.blooberry.com/indexdot/html/tagpages/attributes/core.htm">attributes</a> of the tag, each attribute value ("MBEntry") using its name ("class") as the key. This means that $div_tag->[1]{class} returns "MBEntry". Every time this "if" statement evaluates to true, I have found a BLOG entry.</p>
+<p>Once I have a BLOG entry, I use separate functions to walk down the HTML a little further to get more specific information. To get the subject, for example, you'll observe from the Firebug screen shot above that there's an <a href="http://www.blooberry.com/indexdot/html/tagpages/a/a-hyperlink.htm">anchor element</a> before the actual text. The function get_subject (excerpted below) consumes this anchor tag first (line 5), before getting the text containing the BLOG's subject (line 6).</p>
+<code lang="perl" linenumbers="off">
+sub get_subject() {
+        my $stream = shift;
+        while (my $div_tag = $stream->get_tag("div")) {
+                if ($div_tag->[1]{id} && $div_tag->[1]{id} eq "MBSubject") {
+                        $stream->get_tag("a");
+                        $stream->get_token();
+                        $subject = $stream->get_trimmed_text();
+                        return($subject);
+                }
+        }
+        return ($subject);
+}
+</code>
+<p>The other functions (get_entry() and get_pubdate()) each examine the HTML in a certain way to get at the pertinent text. You can look at the <a href="http://rgu.freeshell.org/feedsn.txt">source code</a> to see what I've done. Some of it is tricky, but it's not too hard.</p>
+<p>As mentioned in the previous post, the output of all this is a list of each BLOG post with their respective titles, subjects and publication dates. At this point, the only thing left to do is walk through this list and generate the RSS XML. That's the subject of the next post.</p>
+<p><i>The full source code is at <a href="http://rgu.freeshell.org/feedsn.txt">feedsn.pl</a>.</i></p>

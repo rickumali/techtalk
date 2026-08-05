@@ -1,0 +1,40 @@
+---
+title: "Diving into HTML5"
+date: 2011-05-20
+tags: ["javascript", "HTML5"]
+permalink: "/blog/2011/05/19/diving-html5/index.html"
+excerpt: "Like a lot of programmers, I've begun to wonder what all the fuss is about regarding HTML5. Casting about, I found Mark Pilgrim's fantastic tutorial on HTML5, appropriately titled \"Dive into HTML5\" . I've been mucking…"
+nid: 56
+nodeType: "story"
+layout: post.njk
+---
+<p>Like a lot of programmers, I've begun to wonder what all the fuss is about regarding HTML5. Casting about, I found Mark Pilgrim's fantastic tutorial on HTML5, appropriately titled <a href="http://diveintohtml5.org/">"Dive into HTML5"</a>. I've been mucking with the canvas element, testing out the basics, and I put together a small web page showing a <a href="http://rgu.freeshell.org/html5/canvas04.html">very simple random but colorful "box" generator</a>.</p>
+
+<img src="/sites/default/files/u3/canvasdraw-fixed.PNG" alt="canvasdraw.PNG" />
+
+<p>
+There's nothing particularly "interesting" about the drawing code, other than the simple fact that there's a drawable object directly in HTML. I have heard of <a href="http://www.w3.org/Graphics/SVG/IG/resources/svgprimer.html">SVG (scalable vector graphics)</a>, but that never caught my fancy. <a href="http://blogs.sitepoint.com/canvas-vs-svg-how-to-choose/">SVG is ultimately vector-based</a>, versus the pixel-level control offered by the canvas. That kind of drawing reminds me of the stuff I did for <a href="/tags/tetris">Tetris</a>. </p>
+
+<p>
+For my box generator, the bulk of the code is in this one JavaScript function:</p>
+
+<code lang="javascript">
+var d_canvas = document.getElementById("d");
+var d_context = d_canvas.getContext("2d");
+// Draw 10 boxes at a time
+function draw_boxes() {
+  var counter = 0;
+  while (counter < 10) {
+    d_context.fillStyle = randomColor();
+    d_context.fillRect(
+      get_random(d_canvas.width),  // x
+      get_random(d_canvas.height), // y
+      get_random(30),              // width
+      get_random(40));             // height
+    counter++;
+  }
+}
+</code>
+
+<p>
+But visit <a href="http://rgu.freeshell.org/html5/canvas04.html">my first HTML5 canvas demo page</a> yourself, and view the source. There's a lot that can be done with the new canvas tag. I think it's cool that I can do some basic 2D graphics in nothing more than my browser and JavaScript!</p>

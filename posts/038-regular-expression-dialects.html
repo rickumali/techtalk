@@ -1,0 +1,86 @@
+---
+title: "Regular Expression Dialects"
+date: 2009-04-05
+tags: ["regular expressions"]
+permalink: "/blog/2009/04/05/regular-expression-dialects/index.html"
+excerpt: "Over the past few weeks I had some simple text transformations that had me reaching for Perl , but ended up doing directly in Vim . These were very small exercises in Regular Expression (RE) matching/replacing, and what…"
+nid: 38
+nodeType: "story"
+layout: post.njk
+---
+<p>Over the past few weeks I had some simple text transformations that had me reaching for <a href="http://use.perl.org/">Perl</a>, but ended up doing directly in <a href="http://www.vim.org/">Vim</a>. These were very small exercises in <a href="http://en.wikipedia.org/wiki/Regular_expression">Regular Expression (RE)</a> matching/replacing, and what struck me was how small differences in dialect can sometimes prevent you from making progress.</p>
+
+<p>Here's the first example:</p>
+
+<pre>
+01/17   Led Zeppelin's first album is released, 1969
+01/19   Janis Joplin is born in Port Arthur, Texas, 1943
+00000122 Sam Cooke is born in Chicago, 1935
+</pre>
+
+<p>These lines are in <a href="http://unixhelp.ed.ac.uk/CGI/man-cgi?calendar">calendar</a> format. On a lark, I wanted to switch to <a href="http://palcal.sourceforge.net/">pal</a>, another calendar program, which required these strings:</p>
+
+<pre>
+00000117 Led Zeppelin's first album is released, 1969
+00000119 Janis Joplin born in Port Arthur, Texas, 1943
+00000122 Sam Cooke is born in Chicago, 1935
+</pre>
+
+<p>If it were just these three lines, then I'd be in the editor, hand-updating the strings manually (VIM: f/x<ESC>0i0000 on each line). However, there are 195 of these lines, so I knew I'd be doing this with programming. Normally I use Perl, doing something like this:</p>
+
+<pre>
+% perl -p -e 's/(\d\d)\/(\d\d)(.*)/0000\1\2\3/' < sample
+00000117   Led Zeppelin's first album is released, 1969
+00000119   Janis Joplin is born in Port Arthur, Texas, 1943
+00000122   Sam Cooke is born in Chicago, 1935
+</pre>
+
+<p>But I was looking at the file in VIM, and I knew VIM had the same capability to do search and replace with regular expressions. Unfortunately, entering the above RE in VIM's command-line mode produces a big fat "pattern not found" error.</p>
+
+<img src="/sites/default/files/patnotfound.jpg" alt="Pattern Not Found in VIM">
+
+<p>Here's where habits can sometimes prevent you from learning something new. It would have been easy to "just do it the old way." But learning new things is the essence of keeping your skills sharp. And for me, it's not a new skill either: I know regular expressions. It was a matter of using them inside of a new tool.</p>
+
+<p>So I stared at VIm's <a href="http://vimdoc.sourceforge.net/htmldoc/pattern.html">pattern.txt help file</a>. Eventually, I found <a href="http://vimdoc.sourceforge.net/htmldoc/pattern.html#perl-patterns">my issue</a>. In VIM, the grouping function is done with a "\(\)", not with unadorned parentheses "()". Backslash! Entering the following into VIM produced the desired results:</p>
+
+<pre>
+%s/^\(\d\d\)\/\(\d\d\)\(.*\)/0000\1\2\3/
+</pre>
+
+<p>It may seem like a small thing, but learning this is helpful because VIM has pattern highlighting. I can enter the first part of the RE as a search expression in the command line (\d\d\/\d\d) and have the pattern highlighted:</p>
+
+<img src="/sites/default/files/pathilite.jpg" alt="Highlighting Patterns in VIM">
+
+<p>This makes VIM a simple RE tester. (Yes, I know there are <a href="http://www.regular-expressions.info/javascriptexample.html">RE testers on the web</a>, but I've shied away from them.) Moreover, Perl can't give me highlighting, unless I decide to settle for just print the match (with \1).</p>
+
+<p>My second example is slightly more involved. My file contains lines like this:</p>
+
+<pre>
+1.1.8 Crawl audio/video
+1.1.9 Federated search (combining inventory results)
+1.1.10 Local Search Results.
+</pre>
+
+<p>I needed these lines to look like this:</p>
+
+<pre>
+Crawl audio/video 1.1.8 
+Federated search (combining inventory results) 1.1.9 
+Local Search Results. 1.1.10 
+</pre>
+
+<p>Using my new found knowledge with VIM, I can test my matching RE (1\.1\.\d\d\?):</p>
+
+<img src="/sites/default/files/nummatch.jpg" alt="Matching Numbers in VIM">
+
+<p>Then I group these and do a swap of the grouped expressions:</p>
+
+<pre>
+%s/\(\d\.\d\.\d\d\?\) \(.*$\)/\2 \1/
+</pre>
+
+<img src="/sites/default/files/repl.jpg" alt="Doing A Simple String Swap in VIM">
+
+<p>So what have we learned? Regular expressions have dialects, and sometimes those dialects can prevent us (at least me) from trying something new. But if you do persist and learn those dialects, you can add to your skills. That's a good thing.</p>
+
+<p><a href="http://oreilly.com/catalog/9781565922570/">Mastering Regular Expressions</a> by Jeffrey Friedl gets into RE dialects, as well as the website <a href="http://www.regular-expressions.info/tools.html">regular-expressions.info.</a></p>
