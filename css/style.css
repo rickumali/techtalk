@@ -51,6 +51,8 @@ pre { overflow-x: auto; padding: 1rem; box-sizing: border-box; max-width: 100%; 
 .post-list .excerpt { margin: 0.25rem 0 0; color: #555; font-size: 0.95rem; }
 .post-list .excerpt img { max-width: 200px; height: auto; float: left; margin: 0 0.75rem 0.5rem 0; }
 
+article h1 { margin-top: 0; }
+
 .pagination { display: flex; gap: 0.75rem; align-items: center; margin: 2rem 0; flex-wrap: wrap; }
 .pagination a { text-decoration: none; padding: 0.25rem 0.6rem; border-radius: 3px; }
 .pagination a.page-num.current { background: #1a4fa0; color: #fff; }
