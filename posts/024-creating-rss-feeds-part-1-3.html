@@ -3,19 +3,17 @@ title: "Creating RSS Feeds (Part 1 of 3)"
 date: 2008-12-13
 tags: ["perl", "code"]
 permalink: "/blog/2008/12/13/creating-rss-feeds-part-1-3/index.html"
-excerpt: "I have a separate BLOG on sports at The Sporting News . However, if you wanted to point your RSS feed reader (say, Bloglines or Google Reader ) to that BLOG, you'd be out of luck. For some reason, Sporting News doesn't…"
+excerpt: "I have a separate BLOG on sports at The Sporting News. However, if you wanted to point your RSS feed reader (say, Bloglines or Google Reader ) to that BLOG, you'd be out of luck."
 nid: 24
 nodeType: "story"
 layout: post.njk
 ---
-I have a separate <a href="http://www.sportingnews.com/blog/rickumali/">BLOG on sports</a> at <a href="http://www.sportingnews.com/">The Sporting News</a>. However, if you wanted to point your RSS feed reader (say, <a href="http://www.bloglines.com/">Bloglines</a> or <a href="http://www.google.com/reader">Google Reader</a>) to that BLOG, you'd be out of luck. For some reason, Sporting News doesn't provide RSS feeds for their blogging public. So I set out to create my own RSS feed.<p>
-
+I have <a href="https://web.archive.org/web/20080127194920/http://www.sportingnews.com/blog/rickumali/">a separate BLOG on sports at The Sporting News</a>. However, if you wanted to point your RSS feed reader (say, <a href="http://www.bloglines.com/">Bloglines</a> or <a href="https://en.wikipedia.org/wiki/Google_Reader">Google Reader</a>) to that BLOG, you'd be out of luck. For some reason, Sporting News doesn't provide RSS feeds for their blogging public. So I set out to create my own RSS feed.<p>
 Creating your own RSS feed out of some web page means reading and processing that web page programmatically. You'll need to suck down the page to your computer, walk the HTML of that page, pull out the interesting bits and assemble it into a valid <a href="http://www.w3.org/TR/REC-xml/">RSS</a> XML document.<p>
 
 The first two steps of sucking down the page and walking down its HTML was done with two Perl modules. (Yes, I used Perl.) <a href="http://search.cpan.org/~petdance/WWW-Mechanize-1.52/lib/WWW/Mechanize.pm">WWW::Mechanize</a> sucks down the page, and <a href="http://search.cpan.org/~gaas/HTML-Parser-3.59/lib/HTML/TokeParser.pm">HTML::TokeParser</a> pulls out the interesting bits. There's lots of code examples that show how to do this (<a href="http://www.perlmonks.org/index.pl?node_id=99254">[1]</a> <a href="http://lwp.interglacial.com/ch01_05.htm#perllwp-CHP-1-SECT-5.3">[2]</a>). Here's an excerpt from <a href="http://rgu.freeshell.org/feedsn.txt">my script</a>:
 
-<code lang="perl">
-my $agent = WWW::Mechanize->new();
+<pre><code class="language-perl">my $agent = WWW::Mechanize->new();
 $agent->get("http://www.sportingnews.com/blog/rickumali");
 
 my $stream = HTML::TokeParser->new(\$agent->{content});
@@ -28,8 +26,8 @@ while (my $div_tag = $stream->get_tag("div")) {
                 $text{$id} = get_entry($stream);
         }
 }
-</code>
+</code></pre>
 
 Following along, you can see that I'm getting the web page (line 2), then walking down the HTML (line 4 and 6). Specifically, I walk down all the div elements, looking for each BLOG post (div class of "MBEntry"). (I got that by looking at the BLOG's HTML.) From there, all that's left is the crying: I pull out the subject, the publication date, and the text itself. I put all of this into some <a href="http://www.perl.com/pub/a/2006/11/02/all-about-hashes.html">hashes</a>, keyed on the ID of the BLOG post. At the completion of this while loop, I have hashes that I can loop through to construct the RSS XML. I'll save that explanation for another day.<p>
 
-<i>The full source code is at <a href="http://rgu.freeshell.org/feedsn.txt">feedsn.pl</a>.</i><p>
+<i>The full source code is at <a href="https://rgu.freeshell.org/feedsn.txt">feedsn.pl</a>.</i><p>
