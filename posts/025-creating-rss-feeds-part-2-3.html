@@ -34,17 +34,17 @@ Knowing all this allows me to write this Perl:
 <p>Since we're looking for a start tag, this means that <code>$div_tag->[1]</code> returns the <code>$attr</code> element. The <code>$attr</code> element is a <a href="http://www.perl.com/doc/manual/html/pod/perlref.html">Perl hash reference</a>, which contains the <a href="http://www.blooberry.com/indexdot/html/tagpages/attributes/core.htm">attributes</a> of the tag, each attribute value ("MBEntry") using its name ("class") as the key. This means that <code>$div_tag->[1]{class}</code> returns "MBEntry". Every time this "if" statement evaluates to true, I have found a BLOG entry.</p>
 <p>Once I have a BLOG entry, I use separate functions to walk down the HTML a little further to get more specific information. To get the subject, for example, you'll observe from the Firebug screen shot above that there's an <a href="http://www.blooberry.com/indexdot/html/tagpages/a/a-hyperlink.htm">anchor element</a> before the actual text. The function <code>get_subject</code> (excerpted below) consumes this anchor tag first (line 5), before getting the text containing the BLOG's subject (line 6).</p>
 
-<pre class="language-perl"><code>sub get_subject() {
-        my $stream = shift;
-        while (my $div_tag = $stream->get_tag("div")) {
-                if ($div_tag->[1]{id} &amp;&amp; $div_tag->[1]{id} eq "MBSubject") {
-                        $stream->get_tag("a");
-                        $stream->get_token();
-                        $subject = $stream->get_trimmed_text();
-                        return($subject);
-                }
+<pre class="language-perl"><code class="language-perl">sub get_subject() {
+    my $stream = shift;
+    while (my $div_tag = $stream->get_tag("div")) {
+        if ($div_tag->[1]{id} &amp;&amp; $div_tag->[1]{id} eq "MBSubject") {
+            $stream->get_tag("a");
+            $stream->get_token();
+            $subject = $stream->get_trimmed_text();
+            return($subject);
         }
-        return ($subject);
+    }
+    return ($subject);
 }
 </code></pre>
 
