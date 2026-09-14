@@ -3,21 +3,21 @@ title: "Best Practice: Keeping an Electronic Notebook"
 date: 2009-09-30
 tags: ["job"]
 permalink: "/blog/2009/09/30/best-practice-keeping-electronic-notebook/index.html"
-excerpt: "My electronic notebook saved me today. I had a technical problem here at work, involving some old internal software. I vaguely remember using this software, but instead of rummaging through old e-mails or polling my…"
+excerpt: "My electronic notebook saved me today. What are these? They're text files. When I think of all the technical habits I have, this has the best dividends."
 nid: 44
 nodeType: "story"
 layout: post.njk
 ---
 <p>My electronic notebook saved me today. I had a technical problem here at work, involving some old internal software. I vaguely remember using this software, but instead of rummaging through old e-mails or polling my co-workers I <a href="http://en.wikipedia.org/wiki/Grep">grepped</a> my electronic notebook. I was able to find notes from the first time I used this software nearly two years ago. Rereading these put enough details into my head to be back "up to speed." I felt pretty smug. Electronic notebooks are my personal "best practice."</p>
 
-<p>So what are these electronic notebooks? They're text files. One text file for every working day. (Each file is named MMDDYY.txt.) Each text file is a running log for what I was doing at the computer that day. This is what my electronic notebook directory looks like:</p>
+<p>So what are these electronic notebooks? They're text files. One text file for every working day. (<b>NOTE</b>: When I originally wrote this post each file was named MMDDYY.txt. Today, I use YYYYMMDD.txt.) Each text file is a running log for what I was doing at the computer that day. This is what my electronic notebook directory looks like:</p>
 
 <img src="/sites/default/files/notebook.png" alt="Screenshot of my Notebook Directory">
 
-<p>Most of what I capture in these files are arcane command lines that I happen to concoct. Here's one from from 2004 (September 30, to be precise), using sed to break up a file with no line breaks on the string "eor".</p>
+<p>Most of what I capture in these files are arcane command lines that I happen to concoct. Here's one from from 2004 (September 30, to be precise), using <code>sed</code> to break up a file with no line breaks on the string "eor".</p>
 
-<code linenumbers="off">
-% cat -n foobar
+<pre class="language-perl">
+<code class="language-perl">% cat -n foobar
      1  Thiseoriseoraeoroneeorlineeorfile.
 
 % sed -e 's/eor/\
@@ -27,33 +27,28 @@ is
 a
 one
 line
-file.
-</code>
+file.</code></pre>
 
-<p>Another kind of entry that I make are errors that I see, and what I did to resolve them. Here's a C++ compilation error for some code I was trying out (to help with <a href="http://ricktechtalk.nfshost.com/blog/2009/02/09/tetris-game-shaping">my Tetris project</a>):</p>
+<p>Another kind of entry that I make are errors that I see, and what I did to resolve them. Here's a C++ compilation error for some code I was trying out (to help with <a href="/blog/2009/02/09/tetris-game-shaping">my Tetris project</a>):</p>
 
-<code linenumbers="off">
-(BASE) 19:46:19 514> make
+<pre class="language-perl">
+<code class="language-perl">(BASE) 19:46:19 514> make
 g++  -g  -c -o Picture.o Picture.cpp
 Picture.cpp: In function `Picture operator&(const Picture&, const Picture&)':
 Picture.cpp:127: error: cannot call member function `int Picture::max(int, int)' without object
-make: *** [Picture.o] Error 1
-</code>
+make: *** [Picture.o] Error 1 </code></pre>
 
 <p>The resolution? In my notes I wrote "I needed to make this a STATIC method!" (Translation: In my Picture.h file, I changed "int max(int, int)" to "static int max(int, int)").</p>
 
 <p>My notebook files contain anything and everything that I might want to remember or lookup in the future. It contains people's names, phone numbers, conference bridge lines, WebEx URLs, directory paths, useful websites, book titles, Java CLASSPATHs and (of course) snippets of code. The one nod to "structure" is that for every entry in a file, I separate it with a "*", and a brief message. It's a headline for the notebook entry. Here's the single entry for my first day at work at my new job:</p>
 
-<code linenumbers="off">
-rumali@rumali-t60a /cygdrive/c/DOCUME~1/rumali/MYDOCU~1/Notebook
+<pre class="language-perl"><code class="language-perl">rumali@rumali-t60a /cygdrive/c/DOCUME~1/rumali/MYDOCU~1/Notebook
 (BASE) 13:15:03 660> egrep '^\* ' 042604.txt
-* Weird Cygwin Error When Accessing BASH Without Network
-</code>
+* Weird Cygwin Error When Accessing BASH Without Network</code></pre>
 
 <p>Here's the second day (excerpted):</p>
 
-<code linenumbers="off">
-rumali@rumali-t60a /cygdrive/c/DOCUME~1/rumali/MYDOCU~1/Notebook
+<pre class="language-perl"><code class="language-perl">rumali@rumali-t60a /cygdrive/c/DOCUME~1/rumali/MYDOCU~1/Notebook
 (BASE) 13:15:15 662> egrep '^\* ' 042704.txt
 * What Perl is Running When Running update_reference.bat?
 * How to Get Engine (dgraph) Stats
@@ -65,8 +60,7 @@ rumali@rumali-t60a /cygdrive/c/DOCUME~1/rumali/MYDOCU~1/Notebook
 * Debugging: Working Through Forge Error
 * Tomcat: Mucking with Service Installation
 * Debugging: Adding --debug to RunCommand.pl (in .BAT scripts)
-* Getting at JCD Status (http://localhost:8088/status)
-</code>
+* Getting at JCD Status (http://localhost:8088/status)</code></pre>
 
 <p>Separating entries in this manner allows me to glance at a single day's file to see what I might have tackled. Add client names if you're a consultant or sales engineer. Add case numbers if you're in technical support. This ability to produce "sections" adds just enough structure to make things useful. (And as a billable consultant, this sometimes helps with the time keeping.)</p>
 
