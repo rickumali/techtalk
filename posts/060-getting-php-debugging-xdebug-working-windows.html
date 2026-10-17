@@ -8,16 +8,15 @@ nid: 60
 nodeType: "story"
 layout: post.njk
 ---
-<p>I've been learning about Drupal Module Development the past few weeks. I'm using the venerable <a href="http://definitivedrupal.org/purchase">"Definitive Guide to Drupal 7"</a> and a few times in the module development chapters (18, 19, 20), author <a href="http://agaric.com/users/ben">Ben Melançon</a> mentions running Drupal "in an IDE" to see how Drupal creates its various internal arrays.</p>
+<p>I've been learning about Drupal Module Development the past few weeks. I'm using the venerable <a href="https://definitivedrupal.org/purchase">"Definitive Guide to Drupal 7"</a> and a few times in the module development chapters (18, 19, 20), author <a href="https://agaric.coop/people/benjamin-melancon">Ben Melançon</a> mentions running Drupal "in an IDE" to see how Drupal creates its various internal arrays.</p>
 
-<p>I know an IDE: I know <a href="http://eclipse.org/">Eclipse</a>! As a Java developer, any day where I'm inside Eclipse, I know I'm "doing development". I've known about Eclipse's abilities to handle other languages (C++, Perl, etc.), so I set about trying to get Eclipse to help me with development in PHP.</p>
+<p>I know an IDE: I know <a href="https://projects.eclipse.org/projects/eclipse">Eclipse</a>! As a Java developer, any day where I'm inside Eclipse, I know I'm "doing development". I've known about Eclipse's abilities to handle other languages (C++, Perl, etc.), so I set about trying to get Eclipse to help me with development in PHP.</p>
 
-<p>I'm running Windows XP. I have a hand-built <a href="http://en.wikipedia.org/wiki/WAMP">WAMP stack</a> composed of Apache 2.2, MySQL 5.1, and PHP 5.2.9-1 (<a href="http://windows.php.net/download">VC6 x86 Thread Safe</a>). After an initial perusal of <a href="http://willy.boerland.com/myblog/happy_b_day_d_dot_o">d-dot-o</a>, I found an entry about <a href="http://drupal.org/node/1077726">Eclipse debugging<a/>. That post features <a href="http://drupal.org/node/1077726#comment-5100194">a comment by jstrauss64</a>, which pointed me to <a href="http://xdebug.org/">XDebug</a>.</p>
+<p>I'm running Windows XP. I have a hand-built <a href="https://en.wikipedia.org/wiki/LAMP_(software_bundle)#WAMP">WAMP stack</a> composed of Apache 2.2, MySQL 5.1, and PHP 5.2.9-1 (<a href="https://www.php.net/downloads.php?os=windows">VC6 x86 Thread Safe</a>). After an initial perusal of d-dot-o, I found an entry about <a href="https://www.drupal.org/node/1077726">Eclipse debugging<a/>. That post features <a href="https://www.drupal.org/node/1077726#comment-5100194">a comment by jstrauss64</a>, which pointed me to <a href="https://xdebug.org">XDebug</a>.</p>
 
-<p>Rather than using my old creaky Eclipse filled with Java add-ons, I decided to get an <a href="http://code.google.com/p/zend-sdk/downloads/list">"all-in-one" Eclipse</a>, containing both <a href="http://framework.zend.com/">Zend</a> and the <a href="http://www.eclipse.org/pdt/downloads/">PHP Developers Tools (PDT)</a>. This would save me some time from having to install these add-ons by hand into Eclipse.</p>
+<p>Rather than using my old creaky Eclipse filled with Java add-ons, I decided to get an "all-in-one" Eclipse, containing both <a href="https://getlaminas.org">Zend</a> and the <a href="https://eclipse.dev/pdt/">PHP Developers Tools (PDT)</a>. This would save me some time from having to install these add-ons by hand into Eclipse.</p>
 
-<p>After I installed this Eclipse into its own directory, I downloaded XDebug. It has a web page which offers <a href="http://xdebug.org/find-binary.php
-">tailored installation instructions</a>, based on the output of <a href="http://php.net/phpinfo">phpinfo()</a>. The tailored instructions had me downloading php_xdebug-2.1.2-5.2-vc6.dll, copying it into my PHP's ext subdirectory, and then editing my php.ini file. The "php -m" command showed that I installed the module correctly, and a restart of my Apache showed that I now had XDebug available. I then configured my Eclipse to point to my PHP, using Preferences (in the Window menu):</p>
+<p>After I installed this Eclipse into its own directory, I downloaded XDebug. It has a web page which offers <a href="https://xdebug.org/wizard">tailored installation instructions</a>, based on the output of <a href="https://www.php.net/phpinfo">phpinfo()</a>. The tailored instructions had me downloading php_xdebug-2.1.2-5.2-vc6.dll, copying it into my PHP's ext subdirectory, and then editing my php.ini file. The <code>php -m</code> command showed that I installed the module correctly, and a restart of my Apache showed that I now had XDebug available. I then configured my Eclipse to point to my PHP, using Preferences (in the Window menu):</p>
 
 <p><img src="/sites/default/files/u3/php-executable-config.png" width="845" height="568" alt="php-executable-config.png" /></p>
 
@@ -25,8 +24,9 @@ layout: post.njk
 
 <p><img src="/sites/default/files/u3/php-launch-error.png"/></p>
 
-<p>I also noticed that I couldn't run the PHP program as a <a href="http://php.net/manual/en/features.commandline.php">CLI</a>. Eclipse only offered "PHP Web Application" as the way to run this program. This error was nasty. Searching on the Internet produced lots of hits but nothing immediate. I did try various php.ini settings, enough so that I created a separate INI file named php-xdebug.ini. This file's differences between php.ini were:</p><code>
-output_buffering = 0
+<p>I also noticed that I couldn't run the PHP program as a <a href="https://www.php.net/manual/en/features.commandline.php">CLI</a>. Eclipse only offered "PHP Web Application" as the way to run this program. This error was nasty. Searching on the Internet produced lots of hits but nothing immediate. I did try various php.ini settings, enough so that I created a separate INI file named php-xdebug.ini. This file's differences between php.ini were:</p>
+<pre class="language-perl">
+<code class="language-perl">output_buffering = 0
 implicit_flush = On
 [xdebug]
 xdebug.remote_enable=1
@@ -34,8 +34,8 @@ xdebug.remote_host="localhost"
 xdebug.remote_port=9000
 xdebug.remote_handler="dbgp"
 xdebug.remote_log=c:\eclipse-php\xdebug.log
-zend_extension_ts = .\ext\php_xdebug-2.1.2-5.2-vc6.dll
-</code>
+zend_extension_ts = .\ext\php_xdebug-2.1.2-5.2-vc6.dll</code>
+</pre>
 <p>Nothing seemed to be making a difference. I stared long and hard at my Eclipse's "preferences" for PHP Debugging, and eventually noticed that it was set to Zend!</p>
 <img src="/sites/default/files/u3/php-debug-settings-wrong.png" width="611" height="401" alt="php-debug-settings-wrong.png" />
 <p>How could I have missed this? I blame the fact that the PHP Preferences separate "Debug" settings from "PHP Executables" settings. I changed the Debug settings to XDebug. I also "enabled" the "Enable CLI Debug" toggle.</p>
